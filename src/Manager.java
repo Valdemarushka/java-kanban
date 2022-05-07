@@ -82,13 +82,14 @@ public class Manager {
     }
 
 
-    enum taskStatus{
+    enum taskStatus {
         IN_PROGRESS,
         NEW,
         DONE;
 
 
     }
+
     void changeEpicStatus(Integer epicID) {
         ArrayList<String> subTasksStatus = new ArrayList<>();
         for (Integer keySubTask : epicSubTasks.keySet()) {

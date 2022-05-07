@@ -3,15 +3,15 @@ package Tasks;
 import java.util.HashMap;
 
 public class Epic extends Task {
-    HashMap<Integer,SubTask> innerSubTask = new HashMap();
+    HashMap<Integer, SubTask> innerSubTask = new HashMap();
 
-    public void addNewSubtaskinEpic(Integer id,SubTask subTask) {
-        if(subTask!=null){
-            innerSubTask.put(id,subTask);
+    public void addNewSubtaskinEpic(Integer id, SubTask subTask) {
+        if (subTask != null) {
+            innerSubTask.put(id, subTask);
         }
     }
 
-    public HashMap<Integer,SubTask> getInnerSubTask() {
+    public HashMap<Integer, SubTask> getInnerSubTask() {
         return innerSubTask;
     }
 
