@@ -13,7 +13,7 @@ public class Manager {
     public int taskIndex = 1;
 
 
-    void addTask(Task task) {
+    public void addTask(Task task) {
         if (normalTasks != null) {
             task.setId(taskIndex);
             normalTasks.put(task.getId(), task);
@@ -21,7 +21,7 @@ public class Manager {
         }
     }
 
-    void addEpic(Epic epic) {
+    public void addEpic(Epic epic) {
         if (epicTasks != null) {
             epic.setId(taskIndex);
             epicTasks.put(epic.getId(), epic);
@@ -29,7 +29,7 @@ public class Manager {
         }
     }
 
-    void addSubTask(SubTask subTask, Integer epicId) {
+    public void addSubTask(SubTask subTask, Integer epicId) {
         if (subTasks != null && subTask != null) {
             subTask.setId(taskIndex);
             subTasks.put(subTask.getId(), subTask);
@@ -40,39 +40,37 @@ public class Manager {
         }
     }
 
-    void deleteAllTask() {
+    public void deleteAllTask() {
         if (normalTasks != null) {
             normalTasks.clear();
         }
     }
 
-    void deleteAllEpic() {
+    public void deleteAllEpic() {
         if (epicTasks != null) {
             epicTasks.clear();
             subTasks.clear();
         }
     }
 
-    void deleteAllSubTask() {
+    public void deleteAllSubTask() {
         if (subTasks != null) {
             subTasks.clear();
             epicTasks.clear();
         }
     }
 
-    void deleteTaskById(Integer Id) {
-        if (normalTasks.containsKey(Id)) {
-            normalTasks.remove(Id);
-        }
+    public void deleteTaskById(Integer Id) {
+        normalTasks.remove(Id);
     }
 
-    void deleteEpicById(Integer id) {
+    public void deleteEpicById(Integer id) {//тут действую черездобавление, потому что при удалении напрямую из мапы
+        //порождается какое то исключение,которое не могу победить:(
         if (epicTasks != null && epicTasks.containsKey(id) && subTasks != null) {
             HashMap<Integer, SubTask> refreshSubTasks = new HashMap<>();
             for (Integer subTasksKey : subTasks.keySet()) {
                 if (subTasks.get(subTasksKey).getEpicId() != id) {
                     refreshSubTasks.put(subTasksKey, subTasks.get(subTasksKey));
-
                 }
             }
             epicTasks.remove(id);
@@ -80,33 +78,41 @@ public class Manager {
         }
     }
 
-    void deleteSubTaskById(Integer id) {
+    public void deleteSubTaskById(Integer id) {//сам ничего не понял что сделал ночью:D переписал заново.
+        //удивительно что оно работало вроде:)
         if (subTasks.containsKey(id)) {
-            Integer epicId = subTasks.get(id).getEpicId();
             SubTask subTaskForDelete = subTasks.get(id);
-            Epic epicRefreshed = epicTasks.get(epicId);
-            HashMap<Integer, SubTask> newInnerSubTask = epicRefreshed.getInnerSubTask();
+            HashMap<Integer, SubTask> newInnerSubTask = epicTasks.get(subTaskForDelete.getEpicId()).getInnerSubTask();
             if (newInnerSubTask != null) {
-                epicTasks.get(subTaskForDelete.getEpicId()).setInnerSubTask(newInnerSubTask);
+                newInnerSubTask.remove(id);
             }
             subTasks.remove(id);
-            changeEpicStatus(epicId);
+            changeEpicStatus(subTaskForDelete.getEpicId());
         }
     }
 
 
-    Object getTaskById(HashMap<String, Object> map, Integer id) {
-        return map.get(id);
+    public Task getTaskById(Integer id) {
+        return normalTasks.get(id);
     }
 
-    void updateTask(Integer taskID, Task newTaskObject) {
+    public Epic getEpicById(Integer id) {
+        return epicTasks.get(id);
+    }
+
+    public SubTask getSubTaskById(Integer id) {
+        return subTasks.get(id);
+    }
+
+
+    public void updateTask(Integer taskID, Task newTaskObject) {
         if (normalTasks != null && newTaskObject != null) {
             newTaskObject.setId(taskID);
             normalTasks.put(taskID, newTaskObject);
         }
     }
 
-    void updateEpic(Integer taskID, Epic newTaskObject) {
+    public void updateEpic(Integer taskID, Epic newTaskObject) {
         if (epicTasks != null && newTaskObject != null) {
             newTaskObject.setId(taskID);
             newTaskObject.setInnerSubTask(epicTasks.get(taskID).getInnerSubTask());
@@ -114,7 +120,7 @@ public class Manager {
         }
     }
 
-    void updateSubTask(Integer taskID, SubTask newTaskObject) {
+    public void updateSubTask(Integer taskID, SubTask newTaskObject) {
         Integer epicId = subTasks.get(taskID).getEpicId();
         if (subTasks != null && newTaskObject != null) {
             newTaskObject.setEpicId(epicId);
@@ -128,7 +134,7 @@ public class Manager {
     }
 
 
-    void changeEpicStatus(Integer epicID) {
+    public void changeEpicStatus(Integer epicID) {
 
         ArrayList<TaskStatus> subTasksStatus = new ArrayList<>();
         for (Integer keySubTask : subTasks.keySet()) {
@@ -151,13 +157,13 @@ public class Manager {
 
     }
 
-    void viewAllTask(HashMap<String, Object> map) {
+    public void viewAllTask(HashMap<String, Object> map) {
         if (map != null) {
             System.out.println(map);
         }
     }
 
-    HashMap<Integer, SubTask> viewSubTaskOfEpic(Integer epicID) {
+    public HashMap<Integer, SubTask> viewSubTaskOfEpic(Integer epicID) {
         Epic epic = epicTasks.get(epicID);
         return epic.getInnerSubTask();
     }
