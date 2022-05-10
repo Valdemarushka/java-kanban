@@ -64,22 +64,19 @@ public class Manager {
         normalTasks.remove(Id);
     }
 
-    public void deleteEpicById(Integer id) {//тут действую черездобавление, потому что при удалении напрямую из мапы
-        //порождается какое то исключение,которое не могу победить:(
+    public void deleteEpicById(Integer id) {
         if (epicTasks != null && epicTasks.containsKey(id) && subTasks != null) {
-            HashMap<Integer, SubTask> refreshSubTasks = new HashMap<>();
-            for (Integer subTasksKey : subTasks.keySet()) {
-                if (subTasks.get(subTasksKey).getEpicId() != id) {
-                    refreshSubTasks.put(subTasksKey, subTasks.get(subTasksKey));
-                }
+            Epic epic = epicTasks.get(id);
+            HashMap<Integer, SubTask> innerSubTaskMap = epic.getInnerSubTask();
+            for (Integer subTasksKey : innerSubTaskMap.keySet()) {
+                subTasks.remove(subTasksKey);
             }
             epicTasks.remove(id);
-            subTasks = refreshSubTasks;
         }
     }
 
-    public void deleteSubTaskById(Integer id) {//сам ничего не понял что сделал ночью:D переписал заново.
-        //удивительно что оно работало вроде:)
+
+    public void deleteSubTaskById(Integer id) {
         if (subTasks.containsKey(id)) {
             SubTask subTaskForDelete = subTasks.get(id);
             HashMap<Integer, SubTask> newInnerSubTask = epicTasks.get(subTaskForDelete.getEpicId()).getInnerSubTask();
@@ -90,7 +87,6 @@ public class Manager {
             changeEpicStatus(subTaskForDelete.getEpicId());
         }
     }
-
 
     public Task getTaskById(Integer id) {
         return normalTasks.get(id);
@@ -103,7 +99,6 @@ public class Manager {
     public SubTask getSubTaskById(Integer id) {
         return subTasks.get(id);
     }
-
 
     public void updateTask(Integer taskID, Task newTaskObject) {
         if (normalTasks != null && newTaskObject != null) {
@@ -133,7 +128,6 @@ public class Manager {
 
     }
 
-
     public void changeEpicStatus(Integer epicID) {
 
         ArrayList<TaskStatus> subTasksStatus = new ArrayList<>();
@@ -154,7 +148,6 @@ public class Manager {
             epicStatus = TaskStatus.IN_PROGRESS;
         }
         epicTasks.get(epicID).setStatus(epicStatus);
-
     }
 
     public void viewAllTask(HashMap<String, Object> map) {
