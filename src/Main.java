@@ -1,12 +1,12 @@
 import Tasks.Epic;
 import Tasks.SubTask;
-import Tasks.Task;
 import Tasks.TaskStatus;
 
 public class Main {
 
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
+
 
         Epic epic1 = new Epic("эпик1", "описаине эпика 1", TaskStatus.NEW);
         SubTask subTask = new SubTask("1 Подзадача эпика1", "Описаине 1 подзадачи эпика1", TaskStatus.NEW, 1);
@@ -22,6 +22,9 @@ public class Main {
         manager.addSubTask(subTask2, epic1.getId());
         manager.addEpic(epic2);
         manager.addSubTask(subTask3, epic2.getId());
+        manager.getEpicById(1);
+        manager.getSubTaskById(2);
+        System.out.println(manager.getHistory());
 
         System.out.println(epic1);
         System.out.println(subTask);
@@ -55,6 +58,7 @@ public class Main {
         manager.deleteSubTaskById(5);
         System.out.println(manager.subTasks);
         System.out.println(' ');
+
     }
 }
 
