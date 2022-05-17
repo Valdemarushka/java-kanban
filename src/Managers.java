@@ -2,13 +2,12 @@ import java.util.List;
 import java.util.ArrayList;
 public class Managers {
 
-       public static TaskManager getDefault() {
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
-//тут совсем не понял зачем вообще нужен этот класс и задание не особо понял. и что тестировать не могу понять.
-// пытался спрашивать в слаке, но там я был не понят:(
+// почитал ответы в слаке еще раз на свежую голову. что то более менее вроде понять удалось. но не до конца:)
 }

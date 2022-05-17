@@ -3,6 +3,7 @@ import Tasks.Task;
 import java.util.ArrayList;
 
 public class InMemoryHistoryManager implements HistoryManager {
+
     ArrayList<Task> historyList = new ArrayList();
 
     @Override

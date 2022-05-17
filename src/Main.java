@@ -24,7 +24,9 @@ public class Main {
         manager.addSubTask(subTask3, epic2.getId());
         manager.getEpicById(1);
         manager.getSubTaskById(2);
-        System.out.println(manager.getHistory());
+        System.out.println("проверка");
+        System.out.println(manager.history.getHistory());
+        System.out.println("проверка");
 
         System.out.println(epic1);
         System.out.println(subTask);
