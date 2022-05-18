@@ -10,17 +10,8 @@ public class InMemoryTaskManager implements TaskManager {
     HashMap<Integer, Task> normalTasks = new HashMap<>();
     HashMap<Integer, Epic> epicTasks = new HashMap<>();
     HashMap<Integer, SubTask> subTasks = new HashMap<>();
-    HistoryManager history;
+    HistoryManager history = Managers.getDefaultHistory();
     public int taskIndex = 1;
-
-
-
-    public InMemoryTaskManager() {
-        this.normalTasks = new HashMap<>();
-        this.epicTasks = new HashMap<>();
-        this.subTasks = new HashMap<>();
-        this.history = Managers.getDefaultHistory();
-    }
 
     @Override
     public void addTask(Task task) {
@@ -181,7 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void viewAllTask(HashMap<String, Object> map) {
+    public void viewAllTask(HashMap<Integer, Task> map) {
         if (map != null) {
             System.out.println(map);
         }
@@ -193,7 +184,8 @@ public class InMemoryTaskManager implements TaskManager {
         return epic.getInnerSubTask();
     }
 
-
-
-
+    @Override
+    public ArrayList<Task> getTaskHistory() {
+        return history.getHistory();
+    }
 }

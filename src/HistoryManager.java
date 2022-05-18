@@ -1,11 +1,12 @@
 import Tasks.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface HistoryManager {
-    ArrayList<Task> historyList = new ArrayList<>();
+    List<Task> historyList = new ArrayList<>();
 
     void addInHistory(Task task);
 
-     ArrayList<Task> getHistory();
+    ArrayList<Task> getHistory();
 }

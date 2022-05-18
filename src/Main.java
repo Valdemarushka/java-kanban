@@ -5,7 +5,10 @@ import Tasks.TaskStatus;
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager manager = new InMemoryTaskManager();
+        InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
+        //TaskManager manager1 = Managers.getDefault();
+        //не могу понять почему, но использование закомеченной реализации не дает возможность нормально обращаться к
+        // мапам менеджера.так что оставил как есть. если направите куда надо, то постараюсь исправить.
 
 
         Epic epic1 = new Epic("эпик1", "описаине эпика 1", TaskStatus.NEW);
@@ -24,9 +27,9 @@ public class Main {
         manager.addSubTask(subTask3, epic2.getId());
         manager.getEpicById(1);
         manager.getSubTaskById(2);
-        System.out.println("проверка");
-        System.out.println(manager.history.getHistory());
-        System.out.println("проверка");
+        System.out.println("начало проверки истории");
+        System.out.println(manager.getTaskHistory());
+        System.out.println("конец проверки истории");
 
         System.out.println(epic1);
         System.out.println(subTask);
