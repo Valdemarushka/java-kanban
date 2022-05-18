@@ -9,8 +9,6 @@ public interface TaskManager {
     HashMap<Integer, Task> normalTasks = new HashMap<>();
     HashMap<Integer, Epic> epicTasks = new HashMap<>();
     HashMap<Integer, SubTask> subTasks = new HashMap<>();
-    public int taskIndex = 1;
-
 
     void addTask(Task task);
 

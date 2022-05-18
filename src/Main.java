@@ -6,9 +6,10 @@ public class Main {
 
     public static void main(String[] args) {
         InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
-        //TaskManager manager1 = Managers.getDefault();
+        //TaskManager manager = Managers.getDefault();
         //не могу понять почему, но использование закомеченной реализации не дает возможность нормально обращаться к
-        // мапам менеджера.так что оставил как есть. если направите куда надо, то постараюсь исправить.
+        // мапам менеджера.так что данную версию(кажется не совсем верную). если направите куда надо,
+        // то постараюсь исправить.
 
 
         Epic epic1 = new Epic("эпик1", "описаине эпика 1", TaskStatus.NEW);
