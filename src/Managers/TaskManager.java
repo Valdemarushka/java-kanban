@@ -1,3 +1,5 @@
+package Managers;
+
 import Tasks.Epic;
 import Tasks.SubTask;
 import Tasks.Task;
@@ -6,9 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface TaskManager {
-    HashMap<Integer, Task> normalTasks = new HashMap<>();
-    HashMap<Integer, Epic> epicTasks = new HashMap<>();
-    HashMap<Integer, SubTask> subTasks = new HashMap<>();
+
 
     void addTask(Task task);
 
@@ -47,5 +47,4 @@ public interface TaskManager {
     HashMap<Integer, SubTask> viewSubTaskOfEpic(Integer epicID);
 
     ArrayList<Task> getTaskHistory();
-
 }

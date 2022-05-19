@@ -1,15 +1,14 @@
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.TaskStatus;
+import Managers.*;
+
+import Tasks.*;
 
 public class Main {
 
     public static void main(String[] args) {
         InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
-        //TaskManager manager = Managers.getDefault();
-        //не могу понять почему, но использование закомеченной реализации не дает возможность нормально обращаться к
-        // мапам менеджера.так что данную версию(кажется не совсем верную). если направите куда надо,
-        // то постараюсь исправить.
+
+        //TaskManager manager = Managers.getDefault(); разобраться на будущее как впихнуть сюда это выражение
+
 
 
         Epic epic1 = new Epic("эпик1", "описаине эпика 1", TaskStatus.NEW);
@@ -31,7 +30,6 @@ public class Main {
         System.out.println("начало проверки истории");
         System.out.println(manager.getTaskHistory());
         System.out.println("конец проверки истории");
-
         System.out.println(epic1);
         System.out.println(subTask);
         System.out.println(subTask2);
