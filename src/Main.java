@@ -6,10 +6,7 @@ public class Main {
 
     public static void main(String[] args) {
         InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
-
         //TaskManager manager = Managers.getDefault(); разобраться на будущее как впихнуть сюда это выражение
-
-
 
         Epic epic1 = new Epic("эпик1", "описаине эпика 1", TaskStatus.NEW);
         SubTask subTask = new SubTask("1 Подзадача эпика1", "Описаине 1 подзадачи эпика1", TaskStatus.NEW, 1);

@@ -15,9 +15,6 @@ public class InMemoryTaskManager implements TaskManager {
     HistoryManager history = Managers.getDefaultHistory();
     public int taskIndex = 1;
 
-
-
-
     @Override
     public void addTask(Task task) {
         if (normalTasks != null) {
@@ -103,10 +100,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(Integer id) {
-
         history.addInHistory(normalTasks.get(id));
         return normalTasks.get(id);
-
     }
 
     @Override
@@ -118,7 +113,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask getSubTaskById(Integer id) {
-
         history.addInHistory(subTasks.get(id));
         return subTasks.get(id);
     }
