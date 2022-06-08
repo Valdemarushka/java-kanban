@@ -5,8 +5,10 @@ import Tasks.SubTask;
 import Tasks.Task;
 import Tasks.TaskStatus;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     public HashMap<Integer, Task> normalTasks = new HashMap<>();
@@ -69,8 +71,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteTaskById(Integer Id) {
-        normalTasks.remove(Id);
+    public void deleteTaskById(Integer id) {
+        normalTasks.remove(id);
+        if(history.getHistory().contains(getSubTaskById(id))){
+            history.remove(id);
+        }
     }
 
     @Override
@@ -82,6 +87,9 @@ public class InMemoryTaskManager implements TaskManager {
                 subTasks.remove(subTasksKey);
             }
             epicTasks.remove(id);
+        }
+        if(history.getHistory().contains(getSubTaskById(id))){
+            history.remove(id);
         }
     }
 
@@ -95,6 +103,9 @@ public class InMemoryTaskManager implements TaskManager {
             }
             subTasks.remove(id);
             changeEpicStatus(subTaskForDelete.getEpicId());
+        }
+        if(history.getHistory().contains(getSubTaskById(id))){
+            history.remove(id);
         }
     }
 
@@ -184,7 +195,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getTaskHistory() {
+    public List<Task> getTaskHistory() {
         return history.getHistory();
     }
 }

@@ -24,9 +24,9 @@ public class Main {
         manager.addSubTask(subTask3, epic2.getId());
         manager.getEpicById(1);
         manager.getSubTaskById(2);
-        System.out.println("начало проверки истории");
+        System.out.println("____________________________");
         System.out.println(manager.getTaskHistory());
-        System.out.println("конец проверки истории");
+        System.out.println("____________________________");
         System.out.println(epic1);
         System.out.println(subTask);
         System.out.println(subTask2);
@@ -59,6 +59,10 @@ public class Main {
         manager.deleteSubTaskById(5);
         System.out.println(manager.subTasks);
         System.out.println(' ');
+
+
+        System.out.println(manager.getTaskHistory());
+
 
     }
 }

@@ -6,6 +6,7 @@ import Tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public interface TaskManager {
 
@@ -46,5 +47,5 @@ public interface TaskManager {
 
     HashMap<Integer, SubTask> viewSubTaskOfEpic(Integer epicID);
 
-    ArrayList<Task> getTaskHistory();
+    List<Task> getTaskHistory();
 }
