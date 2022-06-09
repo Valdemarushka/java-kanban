@@ -8,62 +8,46 @@ public class Main {
         InMemoryTaskManager manager = (InMemoryTaskManager) Managers.getDefault();
         //TaskManager manager = Managers.getDefault(); разобраться на будущее как впихнуть сюда это выражение
 
-        Epic epic1 = new Epic("эпик1", "описаине эпика 1", TaskStatus.NEW);
-        SubTask subTask = new SubTask("1 Подзадача эпика1", "Описаине 1 подзадачи эпика1", TaskStatus.NEW, 1);
-        SubTask subTask2 = new SubTask("2 Подзадача эпика1", "Описаине 2 подзадачи эпика1", TaskStatus.NEW, 1);
-        Epic epic2 = new Epic("эпик2", "описаине эпика 2", TaskStatus.NEW);
-        SubTask subTask3 = new SubTask("1 Подзадача эпика2", "Описаине 1 подзадачи эпика2", TaskStatus.NEW, 4);
-        Epic epic2new = new Epic("эпик2 новый", "описаине эпика 2 новый", TaskStatus.NEW);
-        SubTask subTask3new = new SubTask("1 Подзадача эпика2 новая", "Описаине 1 подзадачи эпика2 новая", TaskStatus.DONE, 4);
+        Task task1 = new Task("Первая", "1", TaskStatus.NEW);
+        Task task2 = new Task("Вторая", "2", TaskStatus.NEW);
+        Task task3 = new Task("Третья", "3", TaskStatus.NEW);
+        Task task4 = new Task("Четвертая", "4", TaskStatus.NEW);
+
+        manager.addTask(task1);
+        manager.addTask(task2);
+        manager.addTask(task3);
+        manager.addTask(task4);
 
 
-        manager.addEpic(epic1);
-        manager.addSubTask(subTask, epic1.getId());
-        manager.addSubTask(subTask2, epic1.getId());
-        manager.addEpic(epic2);
-        manager.addSubTask(subTask3, epic2.getId());
-        manager.getEpicById(1);
-        manager.getSubTaskById(2);
-        System.out.println("____________________________");
-        System.out.println(manager.getTaskHistory());
-        System.out.println("____________________________");
-        System.out.println(epic1);
-        System.out.println(subTask);
-        System.out.println(subTask2);
-        System.out.println(epic2);
-        System.out.println(subTask3);
-        System.out.println(manager.subTasks);
-        System.out.println(manager.epicTasks);
-        System.out.println(' ');
-        System.out.println(manager.epicTasks.get(epic2.getId()));
-        System.out.println("апдейт эпика 2");
-        manager.updateEpic(epic2.getId(), epic2new);
-        System.out.println(manager.epicTasks.get(epic2.getId()));
-        System.out.println(' ');
-        System.out.println(manager.subTasks.get(5));
-        System.out.println(manager.epicTasks.get(epic2.getId()));
-        System.out.println("апдейт сабтаска 5 '");
-        manager.updateSubTask(5, subTask3new);
-        System.out.println(manager.subTasks.get(5));
-        System.out.println(manager.epicTasks.get(epic2.getId()));
-        System.out.println(' ');
-        System.out.println(manager.epicTasks);
-        System.out.println(manager.subTasks);
-        System.out.println("удаляем эпик 1");
-        manager.deleteEpicById(1);
-        System.out.println(manager.epicTasks);
-        System.out.println(manager.subTasks);
-        System.out.println(' ');
-        System.out.println(manager.subTasks);
-        System.out.println("делет сабтаска");
-        manager.deleteSubTaskById(5);
-        System.out.println(manager.subTasks);
-        System.out.println(' ');
-
-
+        System.out.println("____________________________проверка пустой истории");
         System.out.println(manager.getTaskHistory());
 
+        System.out.println("____________________________проверка добавления певого звена");
+        manager.getTaskById(1);
+        System.out.println(manager.getTaskHistory());
 
+        System.out.println("____________________________проверка добавления последующих звеньев");
+        manager.getTaskById(2);
+        manager.getTaskById(3);
+        manager.getTaskById(4);
+        System.out.println(manager.getTaskHistory());
+
+        System.out.println("____________________________проверка удаления первого звена");
+        manager.deleteTaskById(1);
+        System.out.println(manager.getTaskHistory());
+
+        System.out.println("____________________________проверка добавления певого звена повторно");
+        manager.addTask(task1);
+        manager.getTaskById(5);
+        System.out.println(manager.getTaskHistory());
+
+        System.out.println("____________________________проверка добавления удаления дублей");
+        manager.getTaskById(2);
+        System.out.println(manager.getTaskHistory());
+
+        System.out.println("____________________________проверка удаления всех задач");
+        manager.deleteAllTask();
+        System.out.println(manager.getTaskHistory());
     }
 }
 

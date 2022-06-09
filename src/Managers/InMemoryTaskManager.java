@@ -50,13 +50,23 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllTask() {
         if (normalTasks != null) {
+            for (Integer taskId : normalTasks.keySet()) {
+                history.remove(taskId);
+            }
             normalTasks.clear();
+
         }
     }
 
     @Override
     public void deleteAllEpic() {
         if (epicTasks != null) {
+            for (Integer taskId : epicTasks.keySet()) {
+                history.remove(taskId);
+            }
+            for (Integer taskId : subTasks.keySet()) {
+                history.remove(taskId);
+            }
             epicTasks.clear();
             subTasks.clear();
         }
@@ -65,15 +75,18 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllSubTask() {
         if (subTasks != null) {
+            for (Integer taskId : subTasks.keySet()) {
+                history.remove(taskId);
+            }
             subTasks.clear();
-            epicTasks.clear();
+
         }
     }
 
     @Override
     public void deleteTaskById(Integer id) {
         normalTasks.remove(id);
-        if(history.getHistory().contains(getSubTaskById(id))){
+        if (history.containTaskInHistory(id)) {
             history.remove(id);
         }
     }
@@ -88,7 +101,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epicTasks.remove(id);
         }
-        if(history.getHistory().contains(getSubTaskById(id))){
+        if (history.getHistory().contains(getSubTaskById(id))) {
             history.remove(id);
         }
     }
@@ -104,27 +117,27 @@ public class InMemoryTaskManager implements TaskManager {
             subTasks.remove(id);
             changeEpicStatus(subTaskForDelete.getEpicId());
         }
-        if(history.getHistory().contains(getSubTaskById(id))){
+        if (history.getHistory().contains(getSubTaskById(id))) {
             history.remove(id);
         }
     }
 
     @Override
     public Task getTaskById(Integer id) {
-        history.addInHistory(normalTasks.get(id));
+        history.add(normalTasks.get(id));
         return normalTasks.get(id);
     }
 
     @Override
     public Epic getEpicById(Integer id) {
 
-        history.addInHistory(epicTasks.get(id));
+        history.add(epicTasks.get(id));
         return epicTasks.get(id);
     }
 
     @Override
     public SubTask getSubTaskById(Integer id) {
-        history.addInHistory(subTasks.get(id));
+        history.add(subTasks.get(id));
         return subTasks.get(id);
     }
 

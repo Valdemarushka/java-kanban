@@ -8,87 +8,104 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    List<Node<Task>> history = new ArrayList();
+
     Map<Integer, Node<Task>> mapNode = new HashMap<Integer, Node<Task>>();
     Node<Task> first = null;
     Node<Task> last = null;
-    final int MAX_HISTORY_SIZE = 10;
 
-    public List<Task> getTasks() {
+
+    private List<Task> getTasks() {
         ArrayList<Task> historyList = new ArrayList<>();
-        for (Node<Task> node : history) {
-            historyList.add(node.getCurrent());
+        Node<Task> lastNode = last;
+        Node<Task> thisNode = first;
+        if (lastNode == null && thisNode == null) {
+            System.out.println("История пуста");
+            return historyList;
+        }
+        while (true) {
+            historyList.add(thisNode.getCurrent());
+            thisNode = thisNode.getNext();
+            if (thisNode == null) {
+                break;
+            }
         }
         return historyList;
     }
 
 
-    public void linkFirst(Task task) {
-        Node<Task> nodeFirst = new Node<Task>(null, task, null);   //создали первый узел
-        history.add(nodeFirst);                                     //добавили узел в список
-        first = nodeFirst;                                          //указали первый узел
-        last = nodeFirst;                                           //Указали последний узел
-        mapNode.put(task.getId(), nodeFirst);
-    }
-
-    public void linkLast(Task task) {
-        if (task != null) {
-            Node<Task> nodeLast = new Node<Task>(last, task, null); //создали первый узел+сделали ссылку на предыдущий
-            last.setNext(nodeLast);                                     //сделалил ссылку в предыдущем узле на нынешний
-            history.add(nodeLast);                                      //добавили узел в список
-            last = nodeLast;                                            //Указали последний узел
-            mapNode.put(task.getId(), nodeLast);
+    private void linkFirst(Task task) {
+        if (task == null) {
+            return;
         }
-
+        Node<Task> nodeFirst = new Node<Task>(null, task, null);
+        mapNode.put(task.getId(), nodeFirst);
+        first = nodeFirst;
+        last = nodeFirst;
     }
 
-    public void removeFirst(Node<Task> first) {
-        Node<Task> newFirstNode = first.getNext();
-        newFirstNode.setPrevious(null);
-        first = newFirstNode;
-        history.remove(0);
+    private void linkLast(Task task) {
+        if (task == null) {
+            return;
+        }
+        Node<Task> nodeLast = new Node<Task>(last, task, null);
+        last.setNext(nodeLast);
+        last = nodeLast;
+        mapNode.put(task.getId(), nodeLast);
     }
 
-    public void removeNode(Node<Task> node) {
 
-        Node<Task> prevNode = node.getPrevious();
-        Node<Task> nextNode = node.getNext();
-        if (prevNode != null && nextNode != null) {
+    private void removeNode(Node<Task> node) {
+        if (node == null) {
+            return;
+        }
+        if (node.getPrevious() == null && node.getNext() == null) {//удаление единственного нода
+            first = null;
+            last = null;
+            mapNode.remove(node);
+        } else if (node.getPrevious() == null) {//удаление первого нода
+            Node<Task> newFirstNode = node.getNext();
+            newFirstNode.setPrevious(null);
+            first = newFirstNode;
+            mapNode.remove(node);
+        } else if (node.getNext() == null) {//удаление последнего нода
+            Node<Task> newLastNode = node.getPrevious();
+            newLastNode.setNext(null);
+            last = newLastNode;
+            mapNode.remove(node);
+        } else if (node.getPrevious() != null && node.getNext() != null) {//удаление средних нод
+            Node<Task> prevNode = node.getPrevious();
+            Node<Task> nextNode = node.getNext();
             prevNode.setNext(nextNode);
             nextNode.setPrevious(prevNode);
-            history.remove(node);
-        }
-    }
-
-    public void addInHistory(Task task) {
-        if (task != null) {
-            if (history.size() == 0) {
-                linkFirst(task);
-            } else if (history.size() > 0 && history.size() < MAX_HISTORY_SIZE) {
-                if (!mapNode.containsKey(task.getId())) {
-                    linkLast(task);
-                }
-                if (mapNode.containsKey(task.getId())) {
-                    removeNode(mapNode.get(task.getId()));
-                    linkLast(task);
-                }
-            } else {//если history.size()==10
-                if (!mapNode.containsKey(task.getId())) {
-                    removeFirst(first);
-                    linkLast(task);
-                }
-                if (mapNode.containsKey(task.getId())) {
-                    removeNode(mapNode.get(task.getId()));
-                    linkLast(task);
-                }
-            }
+            mapNode.remove(node);
         }
     }
 
     @Override
-    public void remove(int id) {
+    public boolean containTaskInHistory(Integer id) {
+        return mapNode.containsKey(id);
+    }
+
+    @Override
+    public void remove(Integer id) {
         removeNode(mapNode.get(id));
     }
+
+    @Override
+    public void add(Task task) {
+        if (task == null) {
+            return;
+        }
+        if (mapNode.size() == 0) {
+            linkFirst(task);
+        } else if (!mapNode.containsKey(task.getId())) {
+            linkLast(task);
+        } else if (mapNode.containsKey(task.getId())) {
+            removeNode(mapNode.get(task.getId()));
+            linkLast(task);
+        }
+    }
+
 
     @Override
     public List<Task> getHistory() {
