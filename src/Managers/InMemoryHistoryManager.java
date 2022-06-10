@@ -61,30 +61,23 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (node.getPrevious() == null && node.getNext() == null) {//удаление единственного нода
             first = null;
             last = null;
-            mapNode.remove(node);
         } else if (node.getPrevious() == null) {//удаление первого нода
             Node<Task> newFirstNode = node.getNext();
             newFirstNode.setPrevious(null);
             first = newFirstNode;
-            mapNode.remove(node);
         } else if (node.getNext() == null) {//удаление последнего нода
             Node<Task> newLastNode = node.getPrevious();
             newLastNode.setNext(null);
             last = newLastNode;
-            mapNode.remove(node);
         } else if (node.getPrevious() != null && node.getNext() != null) {//удаление средних нод
             Node<Task> prevNode = node.getPrevious();
             Node<Task> nextNode = node.getNext();
             prevNode.setNext(nextNode);
             nextNode.setPrevious(prevNode);
-            mapNode.remove(node);
         }
+        mapNode.remove(node.getCurrent().getId());
     }
 
-    @Override
-    public boolean containTaskInHistory(Integer id) {
-        return mapNode.containsKey(id);
-    }
 
     @Override
     public void remove(Integer id) {
@@ -100,7 +93,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             linkFirst(task);
         } else if (!mapNode.containsKey(task.getId())) {
             linkLast(task);
-        } else if (mapNode.containsKey(task.getId())) {
+        } else {
             removeNode(mapNode.get(task.getId()));
             linkLast(task);
         }

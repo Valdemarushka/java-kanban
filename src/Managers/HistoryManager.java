@@ -12,6 +12,6 @@ public interface HistoryManager {
 
     List<Task> getHistory();
 
-    public boolean containTaskInHistory(Integer id);
+
 
 }
