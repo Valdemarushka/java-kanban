@@ -91,8 +91,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         if (mapNode.size() == 0) {
             linkFirst(task);
-        } else if (!mapNode.containsKey(task.getId())) {
-            linkLast(task);
         } else {
             removeNode(mapNode.get(task.getId()));
             linkLast(task);

@@ -5,7 +5,6 @@ import Tasks.SubTask;
 import Tasks.Task;
 import Tasks.TaskStatus;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,9 +100,7 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epicTasks.remove(id);
         }
-        if (historyManager.getHistory().contains(getSubTaskById(id))) {
-            historyManager.remove(id);
-        }
+        historyManager.remove(id);
     }
 
     @Override
