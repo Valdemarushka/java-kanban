@@ -1,13 +1,17 @@
 package Tasks;
 
+import java.util.StringJoiner;
+
 public class Task {
 
     private Integer id;
+    private TaskType type;
     private String name;
     private String description;
     private TaskStatus status;
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(TaskType type, String name, TaskStatus status, String description) {
+        this.type = type;
         this.name = name;
         this.description = description;
         this.status = status;
@@ -45,13 +49,19 @@ public class Task {
         this.description = description;
     }
 
+    public TaskType getType() {
+        return type;
+    }
+
+    public void setType(TaskType type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        return String.join(",", id.toString(), type.toString(), name, status.toString(), description);
+
     }
+
+
 }

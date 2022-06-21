@@ -19,7 +19,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node<Task> lastNode = last;
         Node<Task> thisNode = first;
         if (lastNode == null && thisNode == null) {
-            System.out.println("История пуста");
             return historyList;
         }
         while (true) {
