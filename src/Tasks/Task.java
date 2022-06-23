@@ -4,7 +4,7 @@ import java.util.StringJoiner;
 
 public class Task {
 
-    private Integer id;
+    private Integer id=1;
     private TaskType type;
     private String name;
     private String description;

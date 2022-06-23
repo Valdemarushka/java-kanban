@@ -11,37 +11,37 @@ import java.util.List;
 public interface TaskManager {
 
 
-    void addTask(Task task) throws IOException;
+    void addTask(Task task);
 
-    void addEpic(Epic epic) throws IOException;
+    void addEpic(Epic epic);
 
-    void addSubTask(SubTask subTask, Integer epicId) throws IOException;
+    void addSubTask(SubTask subTask, Integer epicId);
 
-    void deleteAllTask() throws IOException;
+    void deleteAllTask();
 
-    void deleteAllEpic() throws IOException;
+    void deleteAllEpic();
 
-    void deleteAllSubTask() throws IOException;
+    void deleteAllSubTask();
 
-    void deleteTaskById(Integer Id) throws IOException;
+    void deleteTaskById(Integer Id);
 
-    void deleteEpicById(Integer id) throws IOException;
+    void deleteEpicById(Integer id);
 
-    void deleteSubTaskById(Integer id) throws IOException;
+    void deleteSubTaskById(Integer id);
 
-    Task getTaskById(Integer id) throws IOException;
+    Task getTaskById(Integer id);
 
-    Epic getEpicById(Integer id) throws IOException;
+    Epic getEpicById(Integer id);
 
-    SubTask getSubTaskById(Integer id) throws IOException;
+    SubTask getSubTaskById(Integer id);
 
-    void updateTask(Integer taskID, Task newTaskObject) throws IOException;
+    void updateTask(Integer taskID, Task newTaskObject);
 
-    void updateEpic(Integer taskID, Epic newTaskObject) throws IOException;
+    void updateEpic(Integer taskID, Epic newTaskObject);
 
-    void updateSubTask(Integer taskID, SubTask newTaskObject) throws IOException;
+    void updateSubTask(Integer taskID, SubTask newTaskObject);
 
-    void changeEpicStatus(Integer epicID) throws IOException;
+    void changeEpicStatus(Integer epicID);
 
     void viewAllTask(HashMap<Integer, Task> map);
 
