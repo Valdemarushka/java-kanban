@@ -18,9 +18,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     public FileBackedTasksManager(File fileForSave) throws IOException {
         this.fileForSave = fileForSave;
-        /* "название переменной похоже больше на флаг, а не файл :)"
-    не совсем понял что имеется ввиду. Исправил интуитивно)*/
-
         String value = readFileInString(fileForSave);
         managerFromString(value);
     }
@@ -110,7 +107,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return value.toString();
     }
 
-
     /* ТАСКИ И ИСТОРИЯ В СТРОКУ И В ФАЙЛ*/
     public void save() {// он будет сохранять текущее состояние менеджера в указанный файл
         final String HEAD_SAVE_FILE = "id,type,name,status,description,epic";
@@ -145,16 +141,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     /*УСТАНОВКА ТИПА ТАСКА*/
     TaskStatus setTaskType(String value) {
-        switch (value) {
-            case "NEW":
-                return TaskStatus.NEW;
-            case "IN_PROGRESS":
-                return TaskStatus.IN_PROGRESS;
-            case "DONE":
-                return TaskStatus.DONE;
-            default:
-                return null;
-        }
+        return TaskStatus.valueOf(value);
     }
 
     /*ВОССТАНОВЛЕНИЕ МЕНЕДЖЕРА ИЗ СТРОКИ*/
@@ -189,32 +176,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
             String name = splitValue[2];
             TaskStatus status = setTaskType(splitValue[3]);
             String description = splitValue[4];
-
+            int maxTaskIndex = 1;
             if (splitValue[1].equals("TASK")) {
                 type = TaskType.TASK;
                 Task task = new Task(type, name, status, description);
                 task.setId(id);
-                normalTasks.put(task.getId(), task);
-                if (taskIndex <= task.getId()) {
-                    taskIndex = task.getId() + 1;
-                }
+                addTask(task);
+
             } else if (splitValue[1].equals("EPIC")) {
                 type = TaskType.EPIC;
                 Epic epic = new Epic(type, name, status, description);
                 epic.setId(id);
-                epicTasks.put(epic.getId(), epic);
-                if (taskIndex < epic.getId()) {
-                    taskIndex = epic.getId() + 1;
-                }
+                addEpic(epic);
             } else {
                 type = TaskType.SUBTASK;
                 int epicId = Integer.parseInt(splitValue[5]);
                 SubTask subTask = new SubTask(type, name, status, description, epicId);
                 subTask.setId(id);
-                subTasks.put(subTask.getId(), subTask);
-                if (taskIndex < subTask.getId()) {
-                    taskIndex = subTask.getId() + 1;
-                }
+                addSubTask(subTask, epicId);
             }
         }
     }
