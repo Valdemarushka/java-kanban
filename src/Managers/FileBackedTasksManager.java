@@ -181,19 +181,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 type = TaskType.TASK;
                 Task task = new Task(type, name, status, description);
                 task.setId(id);
-                addTask(task);
+                normalTasks.put(task.getId(), task);
+                if (taskIndex <= task.getId()) {
+                    taskIndex = task.getId() + 1;
+                }
 
             } else if (splitValue[1].equals("EPIC")) {
                 type = TaskType.EPIC;
                 Epic epic = new Epic(type, name, status, description);
                 epic.setId(id);
-                addEpic(epic);
+                epicTasks.put(epic.getId(), epic);
+                if (taskIndex < epic.getId()) {
+                    taskIndex = epic.getId() + 1;
+                }
             } else {
                 type = TaskType.SUBTASK;
                 int epicId = Integer.parseInt(splitValue[5]);
                 SubTask subTask = new SubTask(type, name, status, description, epicId);
                 subTask.setId(id);
-                addSubTask(subTask, epicId);
+                subTask.setId(id);
+                subTasks.put(subTask.getId(), subTask);
+                if (taskIndex < subTask.getId()) {
+                    taskIndex = subTask.getId() + 1;
+                }
             }
         }
     }
