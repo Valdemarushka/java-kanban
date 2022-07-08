@@ -13,7 +13,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     Node<Task> first = null;
     Node<Task> last = null;
 
-
     private List<Task> getTasks() {
         ArrayList<Task> historyList = new ArrayList<>();
         Node<Task> lastNode = last;
@@ -30,7 +29,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         return historyList;
     }
-
 
     private void linkFirst(Task task) {
         if (task == null) {

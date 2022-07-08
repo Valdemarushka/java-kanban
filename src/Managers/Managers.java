@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class Managers {
 
-    public static FileBackedTasksManager getDefault() throws IOException {
+    public static FileBackedTasksManager getDefault()  {
         return new FileBackedTasksManager(new File("src/data", "data.csv"));
     }
 

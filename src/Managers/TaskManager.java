@@ -7,6 +7,7 @@ import Tasks.Task;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -15,7 +16,7 @@ public interface TaskManager {
 
     void addEpic(Epic epic);
 
-    void addSubTask(SubTask subTask, Integer epicId);
+    void addSubTask(SubTask subTask);
 
     void deleteAllTask();
 
@@ -41,12 +42,15 @@ public interface TaskManager {
 
     void updateSubTask(Integer taskID, SubTask newTaskObject);
 
-    void changeEpicStatus(Integer epicID);
+    void refreshEpicStatus(Epic epic);
 
-    void viewAllTask(HashMap<Integer, Task> map);
+    HashMap<Integer,Task> viewAllTask();
+    HashMap<Integer,Epic> viewAllEpic();
+    HashMap<Integer,SubTask> viewAllSubtask();
 
     HashMap<Integer, SubTask> viewSubTaskOfEpic(Integer epicID);
 
     List<Task> getTaskHistory();
+    TreeSet<Task> getPrioritizedTasks();
 
 }
