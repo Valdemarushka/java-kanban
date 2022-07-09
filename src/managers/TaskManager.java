@@ -41,15 +41,15 @@ public interface TaskManager {
 
     void updateSubTask(Integer taskID, SubTask newTaskObject);
 
-    HashMap<Integer,Task> viewAllTask();
+    HashMap<Integer, Task> viewAllTask();
 
-    HashMap<Integer,Epic> viewAllEpic();
+    HashMap<Integer, Epic> viewAllEpic();
 
-    HashMap<Integer,SubTask> viewAllSubtask();
+    HashMap<Integer, SubTask> viewAllSubtask();
 
     HashMap<Integer, SubTask> viewSubTaskOfEpic(Integer epicID);
 
     List<Task> getTaskHistory();
-    TreeSet<Task> getPrioritizedTasks();
 
+    TreeSet<Task> getPrioritizedTasks();
 }

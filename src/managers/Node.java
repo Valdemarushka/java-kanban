@@ -42,7 +42,8 @@ public class Node<Task> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Node<Task> node = (Node<Task>) o;
-        return Objects.equals(previous, node.previous) && Objects.equals(current, node.current) && Objects.equals(next, node.next);
+        return Objects.equals(previous, node.previous) && Objects.equals(current, node.current)
+                && Objects.equals(next, node.next);
     }
 
 
