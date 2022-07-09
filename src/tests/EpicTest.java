@@ -1,11 +1,13 @@
 package tests;
 
-import Managers.Managers;
-import Managers.TaskManager;
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.TaskStatus;
-import Tasks.TaskType;
+import managers.InMemoryTaskManager;
+import managers.Managers;
+import managers.TaskManager;
+import org.junit.jupiter.api.AfterEach;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.TaskStatus;
+import tasks.TaskType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +25,14 @@ class EpicTest {
 
     @BeforeEach
     public void beforeEach() throws IOException {
-        taskManager = Managers.getDefault();
+        taskManager = new InMemoryTaskManager();
+    }
+
+    @AfterEach
+    void clear() {
+        taskManager.deleteAllTask();
+        taskManager.deleteAllSubTask();
+        taskManager.deleteAllEpic();
     }
 
     @Test
@@ -44,32 +53,36 @@ class EpicTest {
 
     @Test
     void epicStatusWithSubTasksStatusInProgress() {
-
         epic = new Epic(TaskType.EPIC, "эпик 1", "описание эпика 1", TaskStatus.NEW);
-        taskManager.addEpic(epic);
+        epic.setId(1);
         subTask1 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.IN_PROGRESS, LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
-        taskManager.addSubTask(subTask1);
-        assertEquals(TaskStatus.IN_PROGRESS, taskManager.getEpicById(1).getStatus());
+        subTask1.setId(3);
+        epic.addNewSubtaskInEpic(subTask1);
+        assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
     }
 
     @Test
     void epicStatusWithSubTasksStatusDone() {
         epic = new Epic(TaskType.EPIC, "эпик 1", "описание эпика 1", TaskStatus.NEW);
-        taskManager.addEpic(epic);
+        epic.setId(1);
         subTask1 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE, LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
-        taskManager.addSubTask(subTask1);
-        assertEquals(TaskStatus.DONE, taskManager.getEpicById(1).getStatus());
+        subTask1.setId(3);
+        epic.addNewSubtaskInEpic(subTask1);
+        assertEquals(TaskStatus.DONE, epic.getStatus());
     }
 
     @Test
     void epicStatusWithSubTasksStatusNewOrDone() {
         epic = new Epic(TaskType.EPIC, "эпик 1", "описание эпика 1", TaskStatus.NEW);
-        taskManager.addEpic(epic);
+        epic.setId(1);
         subTask1 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.NEW, LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
-        taskManager.addSubTask(subTask1);
+        subTask1.setId(2);
         subTask2 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE, LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
-        taskManager.addSubTask(subTask2);
-
-        assertEquals(TaskStatus.NEW, epic.getStatus());
+        subTask1.setId(3);
+        epic.addNewSubtaskInEpic(subTask1);
+        epic.addNewSubtaskInEpic(subTask2);
+        assertEquals(TaskStatus.IN_PROGRESS, epic.getStatus());
     }
+
+    //извиняюсь. я не представляю каково это читать такие бредовые коды)
 }

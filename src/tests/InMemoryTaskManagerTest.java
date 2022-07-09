@@ -1,20 +1,14 @@
 package tests;
 
-import Managers.Managers;
-import Managers.TaskManager;
-import Managers.InMemoryTaskManager;
-import org.junit.jupiter.api.BeforeEach;
+import managers.Managers;
+import managers.TaskManager;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     TaskManager createTaskManager() {
-        return Managers.getDefault();
+        return Managers.getInMemoryTaskManager();
     }
 
     @Test
@@ -90,11 +84,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest {
     @Test
     void updateSubTaskTEST() {
         super.updateSubTaskTEST();
-    }
-
-    @Test
-    void refreshEpicStatusTEST() {
-        super.refreshEpicStatusTEST();
     }
 
     @Test

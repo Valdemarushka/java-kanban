@@ -1,10 +1,9 @@
-package Managers;
+package managers;
 
-import Tasks.Epic;
-import Tasks.SubTask;
-import Tasks.Task;
+import tasks.Epic;
+import tasks.SubTask;
+import tasks.Task;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -42,10 +41,10 @@ public interface TaskManager {
 
     void updateSubTask(Integer taskID, SubTask newTaskObject);
 
-    void refreshEpicStatus(Epic epic);
-
     HashMap<Integer,Task> viewAllTask();
+
     HashMap<Integer,Epic> viewAllEpic();
+
     HashMap<Integer,SubTask> viewAllSubtask();
 
     HashMap<Integer, SubTask> viewSubTaskOfEpic(Integer epicID);

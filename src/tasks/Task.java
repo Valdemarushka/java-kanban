@@ -1,4 +1,4 @@
-package Tasks;
+package tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class Task {
 
-    private Integer id = 1;
+    private Integer id;
     private TaskType type;
     private String name;
     private String description;
@@ -15,7 +15,8 @@ public class Task {
     private Duration duration;
     private LocalDateTime startTime;
 
-    public Task(TaskType type, String name, TaskStatus status, LocalDateTime startTime, Duration duration, String description) {
+    public Task(TaskType type, String name, TaskStatus status, LocalDateTime startTime, Duration duration,
+                String description) {
         this.type = type;
         this.name = name;
         this.status = status;
@@ -118,6 +119,7 @@ public class Task {
         }
 
 
-        return String.join(",", id.toString(), type.toString(), name, taskStatus, formatDateTime, taskDuration, description);
+        return String.join(",", id.toString(), type.toString(), name, taskStatus, formatDateTime,
+                taskDuration, description);
     }
 }

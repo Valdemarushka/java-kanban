@@ -1,7 +1,7 @@
-package Managers;
+package managers;
 
-import Exeption.ManagerSaveException;
-import Tasks.*;
+import exeption.ManagerSaveException;
+import tasks.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,8 +18,10 @@ import static java.nio.file.Files.createDirectory;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
     private final File fileForSave;
+    final String HEAD_SAVE_FILE = "id,type,name,status,description,startTime,duration,epic";
+    final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
 
-    public FileBackedTasksManager(File fileForSave)  {
+    public FileBackedTasksManager(File fileForSave) {
         this.fileForSave = fileForSave;
         String value = readFileInString(fileForSave);
         managerFromString(value);
@@ -29,8 +31,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         TaskManager manager = Managers.getDefault();
     }
 
-    /* ПРОВЕРКА ФАЙЛА И ДЕРИКТОРИИ*/
-    static void checkOrCreateDirAndFile(File fileForSave)  {
+
+    //__________Проверка/создание файла и дериктории__________
+    void checkOrCreateDirAndFile(File fileForSave) {
         String home = fileForSave.getParent();
         String FileName = fileForSave.getName();
 
@@ -59,12 +62,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-    /* ЧТЕНИЕ ФАЙЛА В СТРОКУ*/
-    public String readFileInString(File fileForSave)  {
+    //__________Конвертация файла в строку__________
+    public String readFileInString(File fileForSave) {
         checkOrCreateDirAndFile(fileForSave);
         StringJoiner value = new StringJoiner("\n");
-        try (Reader fileReader = new FileReader(fileForSave);
-             BufferedReader br = new BufferedReader(fileReader);) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileForSave))) {
             while (br.ready()) {
                 String line = br.readLine();
                 value.add(line);
@@ -75,16 +77,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return value.toString();
     }
 
-    /* ТАСКИ И ИСТОРИЯ В СТРОКУ И В ФАЙЛ*/
-    public void save() {// он будет сохранять текущее состояние менеджера в указанный файл
-        final String HEAD_SAVE_FILE = "id,type,name,status,description,startTime,duration,epic";
+    //__________Конвертация информации в строку+запись в файл__________
+    public void save() {
         StringJoiner managerData = new StringJoiner("\n");
         managerData.add(HEAD_SAVE_FILE);
-        HashMap<Integer, Task> allTask = new HashMap<>();
-        allTask.putAll(normalTasks);
-        allTask.putAll(epicTasks);
-        allTask.putAll(subTasks);
-        for (Task task : allTask.values()) {
+        for (Task task : normalTasks.values()) {
+            managerData.add(task.toString());
+        }
+        for (Task task : epicTasks.values()) {
+            managerData.add(task.toString());
+        }
+        for (Task task : subTasks.values()) {
             managerData.add(task.toString());
         }
         if (!historyManager.getHistory().isEmpty()) {
@@ -97,7 +100,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-    /* ИСТОРИЯ В СТРОКУ*/
+    //__________Конвертация истории в строку__________
     static String historyToString(HistoryManager manager) {
         List<Task> history = manager.getHistory();
         StringJoiner historyInString = new StringJoiner(",");
@@ -107,17 +110,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         return historyInString.toString();
     }
 
-    /*УСТАНОВКА ТИПА ТАСКА*/
+
+    //__________Задаине типа таска__________
     TaskStatus setTaskType(String value) {
-        if(value=="null"){
+        if (value.equals("null")) {
             return null;
-        }else{
+        } else {
             return TaskStatus.valueOf(value);
         }
-
     }
 
-    /*ВОССТАНОВЛЕНИЕ МЕНЕДЖЕРА ИЗ СТРОКИ*/
+    //__________Восстановление менеджера из строки__________
     void managerFromString(String value) {
         String splitter = "\n    \n";
         String tasksString = "";
@@ -135,48 +138,44 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         if (!historyString.isBlank()) {
             historyFromString(historyString);
         }
-        refreshSortedTasks();
     }
 
-    /*ТАСКИ ИЗ СТРОКИ+ЗАПОЛНЕНИЕ HASHMAP*/
+    //__________Восстановление тасков из строки__________
     void tasksFromString(String taskString) {
         String[] splitTasksInString = taskString.split("\n");
         for (int i = 1; i < splitTasksInString.length; i++) {
 
             String[] splitValue = splitTasksInString[i].split(",");
             Integer id = Integer.parseInt(splitValue[0]);
-            TaskType type;
+            TaskType taskType = TaskType.valueOf(splitValue[1]);
             String name = splitValue[2];
             TaskStatus status = setTaskType(splitValue[3]);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
             LocalDateTime startTime;
-            if(splitValue[4].equals("null")){
+            if (splitValue[4].equals("null")) {
                 startTime = null;
-            }else{
-                startTime = LocalDateTime.parse(splitValue[4], formatter);
+            } else {
+                startTime = LocalDateTime.parse(splitValue[4], DATE_FORMATTER);
             }
 
             Duration duration;
-            if(splitValue[5].equals("null")){
+            if (splitValue[5].equals("null")) {
                 duration = null;
-            }else{
+            } else {
                 duration = Duration.parse(splitValue[5]);
             }
 
             String description = splitValue[6];
-            if (splitValue[1].equals("TASK")) {
-                type = TaskType.TASK;
-                Task task = new Task(type, name, status, startTime, duration, description);
+            if (taskType == TaskType.TASK) {
+                Task task = new Task(taskType, name, status, startTime, duration, description);
                 task.setId(id);
                 normalTasks.put(task.getId(), task);
                 if (taskIndex <= task.getId()) {
                     taskIndex = task.getId() + 1;
                 }
 
-            } else if (splitValue[1].equals("EPIC")) {
-                type = TaskType.EPIC;
-                Epic epic = new Epic(type, name, description,status);
+            } else if (taskType == TaskType.EPIC) {
+                Epic epic = new Epic(taskType, name, description, status);
                 epic.setId(id);
                 epic.setStartTime(startTime);
                 epic.setDuration(duration);
@@ -187,9 +186,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 }
 
             } else {
-                type = TaskType.SUBTASK;
                 int epicId = Integer.parseInt(splitValue[7]);
-                SubTask subTask = new SubTask(type, name, status, startTime, duration, description, epicId);
+                SubTask subTask = new SubTask(taskType, name, status, startTime, duration, description, epicId);
                 subTask.setId(id);
                 subTasks.put(subTask.getId(), subTask);
                 Epic epic = epicTasks.get(epicId);
@@ -201,7 +199,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
     }
 
-    /*ИСТОРИЯ ИЗ СТРОКИ+ЗАПОЛНЕНИЕ HASHMAP*/
+    //__________Восстановление истории просмотров тасков и сорторовки из строки__________
     void historyFromString(String historyInString) {
         String[] history = historyInString.split(",");
         for (String indexTask : history) {
@@ -214,6 +212,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 historyManager.add(subTasks.get(index));
             }
         }
+        sortedTasks.addAll(normalTasks.values());
+        sortedTasks.addAll(epicTasks.values());
+        sortedTasks.addAll(subTasks.values());
     }
 
     @Override
@@ -275,7 +276,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         historyManager.add(normalTasks.get(id));
         save();
         return normalTasks.get(id);
-
+        // тут проблема в том что  save() должен стоять именно мужду двух этих методов. по этому я и не использую
+        // родительские методы
     }
 
     @Override
@@ -283,7 +285,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         historyManager.add(epicTasks.get(id));
         save();
         return epicTasks.get(id);
-
     }
 
     @Override
@@ -310,24 +311,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         super.updateSubTask(taskID, newTaskObject);
         save();
     }
-
-    @Override
-    public void refreshEpicStatus(Epic epic) {
-        super.refreshEpicStatus(epic);
-        save();
-    }
-
-
-
-    @Override
-    public HashMap<Integer, SubTask> viewSubTaskOfEpic(Integer epicID) {
-        return super.viewSubTaskOfEpic(epicID);
-    }
-
-    @Override
-    public List<Task> getTaskHistory() {
-        return super.getTaskHistory();
-    }
-
 
 }

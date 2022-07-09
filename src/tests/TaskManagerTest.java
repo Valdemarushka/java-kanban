@@ -1,7 +1,7 @@
 package tests;
 
-import Managers.TaskManager;
-import Tasks.*;
+import managers.TaskManager;
+import tasks.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,9 +89,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void deleteTaskByIdTEST() {
         taskManager.addTask(task1);
         Assertions.assertFalse(taskManager.viewAllTask().isEmpty());
+
         taskManager.deleteTaskById(1);
         Assertions.assertTrue(taskManager.viewAllTask().isEmpty());
-
     }
 
     @Test
@@ -106,21 +106,23 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void deleteSubTaskByIdTEST() {
         taskManager.addEpic(epic3);
         taskManager.addSubTask(subtask4);
-        Assertions.assertFalse(taskManager.viewAllSubtask().isEmpty());
-        taskManager.deleteSubTaskById(2);
-        Assertions.assertTrue(taskManager.viewAllSubtask().isEmpty());
+        Assertions.assertFalse(taskManager.viewAllSubtask().isEmpty(), "пусто");
+        taskManager.deleteSubTaskById(subtask4.getId());
+        Assertions.assertNotNull(taskManager.getSubTaskById(subtask4.getId()), "не пуста");
     }
 
     @Test
     void getTaskByIdTEST() {
         taskManager.addTask(task1);
         assertEquals(task1, taskManager.getTaskById(1));
+        Assertions.assertNull(taskManager.getTaskById(500), "неверный идентификатор ломает");
     }
 
     @Test
     void getEpicByIdTEST() {
         taskManager.addEpic(epic3);
         assertEquals(epic3, taskManager.getEpicById(1));
+        Assertions.assertNull(taskManager.getEpicById(500), "неверный идентификатор ломает");
     }
 
     @Test
@@ -128,6 +130,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addEpic(epic3);
         taskManager.addTask(task1);
         assertEquals(task1, taskManager.getTaskById(2));
+        Assertions.assertNull(taskManager.getSubTaskById(500), "неверный идентификатор ломает");
     }
 
     @Test
@@ -135,14 +138,17 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addTask(task1);
         taskManager.updateTask(1, task2);
         assertEquals(task2, taskManager.getTaskById(1));
-
+        taskManager.updateTask(500, task2);
+        assertFalse(taskManager.viewAllTask().containsKey(500), "добавилась левая задача");
     }
 
     @Test
     void updateEpicTEST() {
         taskManager.addEpic(epic3);
         taskManager.updateEpic(1, epic4);
+        taskManager.updateEpic(500, epic4);
         assertEquals(epic4, taskManager.getEpicById(1));
+        assertFalse(taskManager.viewAllEpic().containsKey(500), "добавилась левая задача");
     }
 
     @Test
@@ -150,15 +156,9 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addEpic(epic3);
         taskManager.addSubTask(subtask4);
         taskManager.updateSubTask(2, subtask5);
+        taskManager.updateSubTask(500, subtask5);
         assertEquals(subtask5, taskManager.getSubTaskById(2));
-    }
-
-    @Test
-    void refreshEpicStatusTEST() {
-        taskManager.addEpic(epic3);
-        taskManager.addSubTask(subtask4);
-        subtask4.setStatus(TaskStatus.DONE);
-        assertEquals(TaskStatus.DONE, taskManager.getEpicById(1).getStatus());
+        assertFalse(taskManager.viewAllSubtask().containsKey(500), "добавилась левая задача");
 
     }
 
@@ -177,6 +177,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addSubTask(subtask5);
         int i = 2;
         assertEquals(taskManager.viewSubTaskOfEpic(1).size(), i);
+        assertNull(taskManager.viewSubTaskOfEpic(500));
     }
 
     @Test
@@ -199,8 +200,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addTask(task4);
         int i = 4;
         assertEquals(taskManager.getPrioritizedTasks().size(), i);
-        assertEquals(taskManager.getPrioritizedTasks().first(), task2);
-        assertEquals(taskManager.getPrioritizedTasks().last(), task1);
+        assertEquals(taskManager.getPrioritizedTasks().first(), task1);
+        assertEquals(taskManager.getPrioritizedTasks().last(), task2);
 
 
     }
