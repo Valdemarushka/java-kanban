@@ -15,7 +15,7 @@ public class InMemoryTaskManager implements TaskManager {
     public HistoryManager historyManager = Managers.getDefaultHistory();
     public int taskIndex = 0;
 
-    private int NextIndex() {
+    private int nextIndex() {
         return ++taskIndex;
     }
 
@@ -44,7 +44,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void addTask(Task task) {
         if (normalTasks != null && task != null) {
             if (timeNotBusy(task)) {
-                task.setId(NextIndex());
+                task.setId(nextIndex());
                 normalTasks.put(task.getId(), task);
                 System.out.println("Таск добавлен" + task);
                 sortedTasks.add(task);
@@ -57,7 +57,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addEpic(Epic epic) {
         if (epicTasks != null && epic != null) {
-            epic.setId(NextIndex());
+            epic.setId(nextIndex());
             epic.updateEpicStatus();
             epicTasks.put(epic.getId(), epic);
             System.out.println("Эпик добавлен" + epic);
@@ -69,7 +69,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subTasks != null && subTask != null && epicTasks != null) {
             if (epicTasks.containsKey(subTask.getEpicId())) {
                 if (timeNotBusy(subTask)) {
-                    subTask.setId(NextIndex());
+                    subTask.setId(nextIndex());
                     subTasks.put(subTask.getId(), subTask);
                     System.out.println("Сабтаск добавлен" + subTask);
                     Epic epic = epicTasks.get(subTask.getEpicId());
@@ -179,6 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubTaskById(Integer id) {
         if (subTasks.containsKey(id) && epicTasks != null && epicTasks.containsKey(id) && sortedTasks != null) {
             SubTask subTaskForDelete = subTasks.get(id);
+            sortedTasks.remove(subTaskForDelete);
             Epic epicForUpdate = epicTasks.get(subTaskForDelete.getEpicId());
             HashMap<Integer, SubTask> newInnerSubTask = epicForUpdate.getInnerSubTask();
             if (newInnerSubTask != null) {

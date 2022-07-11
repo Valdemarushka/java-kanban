@@ -41,7 +41,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void addTaskTEST() {
+    void addTaskTest() {
         taskManager.addTask(task1);
         assertNotNull(taskManager.getTaskById(task1.getId()), "задача null");
         Assertions.assertFalse(taskManager.viewAllTask().isEmpty());
@@ -50,13 +50,13 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void addEpicTEST() {
+    void addEpicTest() {
         taskManager.addEpic(epic3);
         assertNotNull(taskManager.getEpicById(epic3.getId()), "задача null");
     }
 
     @Test
-    void addSubTaskTEST() {
+    void addSubTaskTest() {
         taskManager.addEpic(epic3);
         assertNotNull(taskManager.getEpicById(epic3.getId()), "задача null");
         taskManager.addSubTask(subtask4);
@@ -64,21 +64,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteAllTaskTEST() {
+    void deleteAllTaskTest() {
         taskManager.addTask(task1);
         taskManager.deleteAllTask();
         Assertions.assertTrue(taskManager.viewAllTask().isEmpty());
     }
 
     @Test
-    void deleteAllEpicTEST() {
+    void deleteAllEpicTest() {
         taskManager.addEpic(epic3);
         taskManager.deleteAllEpic();
         Assertions.assertTrue(taskManager.viewAllEpic().isEmpty());
     }
 
     @Test
-    void deleteAllSubTaskTEST() {
+    void deleteAllSubTaskTest() {
         taskManager.addEpic(epic3);
         taskManager.addSubTask(subtask4);
         taskManager.deleteAllSubTask();
@@ -86,7 +86,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteTaskByIdTEST() {
+    void deleteTaskByIdTest() {
         taskManager.addTask(task1);
         Assertions.assertFalse(taskManager.viewAllTask().isEmpty());
 
@@ -95,7 +95,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteEpicByIdTEST() {
+    void deleteEpicByIdTest() {
         taskManager.addEpic(epic3);
         Assertions.assertFalse(taskManager.viewAllEpic().isEmpty());
         taskManager.deleteEpicById(1);
@@ -103,7 +103,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void deleteSubTaskByIdTEST() {
+    void deleteSubTaskByIdTest() {
         taskManager.addEpic(epic3);
         taskManager.addSubTask(subtask4);
         Assertions.assertFalse(taskManager.viewAllSubtask().isEmpty(), "пусто");
@@ -112,21 +112,21 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getTaskByIdTEST() {
+    void getTaskByIdTest() {
         taskManager.addTask(task1);
         assertEquals(task1, taskManager.getTaskById(1));
         Assertions.assertNull(taskManager.getTaskById(500), "неверный идентификатор ломает");
     }
 
     @Test
-    void getEpicByIdTEST() {
+    void getEpicByIdTest() {
         taskManager.addEpic(epic3);
         assertEquals(epic3, taskManager.getEpicById(1));
         Assertions.assertNull(taskManager.getEpicById(500), "неверный идентификатор ломает");
     }
 
     @Test
-    void getSubTaskByIdTEST() {
+    void getSubTaskByIdTest() {
         taskManager.addEpic(epic3);
         taskManager.addTask(task1);
         assertEquals(task1, taskManager.getTaskById(2));
@@ -134,7 +134,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateTaskTEST() {
+    void updateTaskTest() {
         taskManager.addTask(task1);
         taskManager.updateTask(1, task2);
         assertEquals(task2, taskManager.getTaskById(1));
@@ -143,7 +143,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateEpicTEST() {
+    void updateEpicTest() {
         taskManager.addEpic(epic3);
         taskManager.updateEpic(1, epic4);
         taskManager.updateEpic(500, epic4);
@@ -152,7 +152,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void updateSubTaskTEST() {
+    void updateSubTaskTest() {
         taskManager.addEpic(epic3);
         taskManager.addSubTask(subtask4);
         taskManager.updateSubTask(2, subtask5);
@@ -163,7 +163,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void viewAllTaskTEST() {
+    void viewAllTaskTest() {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         int i = 2;
@@ -171,7 +171,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void viewSubTaskOfEpicTEST() {
+    void viewSubTaskOfEpicTest() {
         taskManager.addEpic(epic3);
         taskManager.addSubTask(subtask4);
         taskManager.addSubTask(subtask5);
@@ -181,7 +181,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getTaskHistoryTEST() {
+    void getTaskHistoryTest() {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getTaskById(1);
@@ -193,7 +193,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    void getPrioritizedTasksTEST() {
+    void getPrioritizedTasksTest() {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.addTask(task3);

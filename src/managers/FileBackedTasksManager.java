@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
 import java.io.IOException;
 import java.util.StringJoiner;
@@ -134,6 +133,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
         }
         if (!tasksString.isBlank()) {
             tasksFromString(tasksString);
+            sortedListRecovery();
         }
         if (!historyString.isBlank()) {
             historyFromString(historyString);
@@ -212,8 +212,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
                 historyManager.add(subTasks.get(index));
             }
         }
+    }
+
+    //__________Восстановление сортированного списка__________
+    void sortedListRecovery() {
         sortedTasks.addAll(normalTasks.values());
-        sortedTasks.addAll(epicTasks.values());
         sortedTasks.addAll(subTasks.values());
     }
 
@@ -273,25 +276,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
 
     @Override
     public Task getTaskById(Integer id) {
-        historyManager.add(normalTasks.get(id));
-        save();
-        return normalTasks.get(id);
-        // тут проблема в том что  save() должен стоять именно мужду двух этих методов. по этому я и не использую
-        // родительские методы
+        Task task = super.getTaskById(id);
+        if (task != null) {
+            save();
+        }
+        return task;
     }
 
     @Override
     public Epic getEpicById(Integer id) {
-        historyManager.add(epicTasks.get(id));
-        save();
-        return epicTasks.get(id);
+        Epic epic = super.getEpicById(id);
+        if (epic != null) {
+            save();
+        }
+        return epic;
     }
 
     @Override
     public SubTask getSubTaskById(Integer id) {
-        historyManager.add(subTasks.get(id));
-        save();
-        return subTasks.get(id);
+        SubTask subTask = super.getSubTaskById(id);
+        if (subTask != null) {
+            save();
+        }
+        return subTask;
     }
 
     @Override

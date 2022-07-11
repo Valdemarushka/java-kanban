@@ -45,6 +45,4 @@ public class Node<Task> {
         return Objects.equals(previous, node.previous) && Objects.equals(current, node.current)
                 && Objects.equals(next, node.next);
     }
-
-
 }
