@@ -1,6 +1,7 @@
 package managers;
 
 import exeption.ManagerSaveException;
+
 import tasks.*;
 
 import java.io.*;
@@ -16,18 +17,16 @@ import java.util.StringJoiner;
 import static java.nio.file.Files.createDirectory;
 
 public class FileBackedTasksManager extends InMemoryTaskManager implements TaskManager {
-    private final File fileForSave;
+    private final File fileForSave = new File("src/data", "data.csv");
+    ;
     final String HEAD_SAVE_FILE = "id,type,name,status,description,startTime,duration,epic";
     final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
 
-    public FileBackedTasksManager(File fileForSave) {
-        this.fileForSave = fileForSave;
-        String value = readFileInString(fileForSave);
-        managerFromString(value);
-    }
 
-    public static void main(String[] args) throws IOException {
-        TaskManager manager = Managers.getDefault();
+    public FileBackedTasksManager() {
+        //закомментил эту часть кода, так как онамешала HttpTaskManager
+        //String value = readFileInString(fileForSave);
+        //managerFromString(value);
     }
 
 
@@ -223,6 +222,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager implements TaskM
     @Override
     public void addTask(Task task) {
         super.addTask(task);
+        System.out.println("FBTM: addTask сохранены");
         save();
     }
 

@@ -46,7 +46,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (timeNotBusy(task)) {
                 task.setId(nextIndex());
                 normalTasks.put(task.getId(), task);
-                System.out.println("Таск добавлен" + task);
+                System.out.println("Таск добавлен\n" + task);
                 sortedTasks.add(task);
             } else {
                 System.out.println("Пересекает время другого таска. Таск не добавлен.");
@@ -60,7 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setId(nextIndex());
             epic.updateEpicStatus();
             epicTasks.put(epic.getId(), epic);
-            System.out.println("Эпик добавлен" + epic);
+            System.out.println("Эпик добавлен\n" + epic);
         }
     }
 
@@ -71,7 +71,7 @@ public class InMemoryTaskManager implements TaskManager {
                 if (timeNotBusy(subTask)) {
                     subTask.setId(nextIndex());
                     subTasks.put(subTask.getId(), subTask);
-                    System.out.println("Сабтаск добавлен" + subTask);
+                    System.out.println("Сабтаск добавлен\n" + subTask);
                     Epic epic = epicTasks.get(subTask.getEpicId());
                     if (epic != null) {
                         epic.addNewSubtaskInEpic(subTask);
@@ -302,6 +302,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getTaskHistory() {
-        return historyManager.getHistory();
+            return historyManager.getHistory();
     }
 }

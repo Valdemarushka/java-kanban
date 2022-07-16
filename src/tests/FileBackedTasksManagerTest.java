@@ -1,13 +1,9 @@
 package tests;
 
 import managers.FileBackedTasksManager;
-import managers.Managers;
 import managers.TaskManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +11,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
 
 
     TaskManager createTaskManager() {
-        return new FileBackedTasksManager(new File("src/data", "data.csv"));
+        return new FileBackedTasksManager();
     }
 
     @AfterEach
@@ -30,7 +26,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     void saveAndLoadFileWithEmptyHistory() {
         taskManager.addTask(task1);
         assertTrue(taskManager.getTaskHistory().isEmpty(), "история не пуста");
-        TaskManager taskManager2 = new FileBackedTasksManager(new File("src/data", "data.csv"));
+        TaskManager taskManager2 = new FileBackedTasksManager();
         assertTrue(taskManager2.getTaskHistory().isEmpty(), "история не пуста");
         assertFalse(taskManager2.viewAllTask().isEmpty(), "таск не восстановился");
     }
@@ -40,7 +36,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
     void saveAndLoadFileWithEmptyEpic() {
         taskManager.addEpic(epic3);
         assertTrue(taskManager.getTaskHistory().isEmpty(), "история не пуста");
-        TaskManager taskManager2 = new FileBackedTasksManager(new File("src/data", "data.csv"));
+        TaskManager taskManager2 = new FileBackedTasksManager();
         assertTrue(taskManager2.getTaskHistory().isEmpty(), "история не пуста");
         assertFalse(taskManager2.viewAllEpic().isEmpty(), "таск не восстановился");
     }
@@ -50,7 +46,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
         assertTrue(taskManager.viewAllTask().isEmpty(), "таски не пусты");
         assertTrue(taskManager.viewAllEpic().isEmpty(), "таски не пусты");
         assertTrue(taskManager.viewAllSubtask().isEmpty(), "таски не пусты");
-        TaskManager taskManager2 = new FileBackedTasksManager(new File("src/data", "data.csv"));
+        TaskManager taskManager2 = new FileBackedTasksManager();
         assertTrue(taskManager2.getTaskHistory().isEmpty(), "история не пуста");
         assertTrue(taskManager2.viewAllEpic().isEmpty(), "список пуст");
     }

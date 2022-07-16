@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static managers.Managers.getDefault;
+import static managers.Managers.getFileBackedTasksManager;
 import static managers.Managers.getDefaultHistory;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
-    TaskManager manager = getDefault();
+    TaskManager manager = getFileBackedTasksManager();
     HistoryManager historyManager = getDefaultHistory();
     Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW, LocalDateTime.of(2001, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "11");
     Task task2 = new Task(TaskType.TASK, "2004", TaskStatus.NEW, LocalDateTime.of(2006, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "22");

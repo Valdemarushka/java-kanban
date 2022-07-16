@@ -39,5 +39,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="gson-2.9.0" level="project" />
+    <orderEntry type="library" name="junit-jupiter-api-5.4.2" level="project" />
   </component>
 </module>

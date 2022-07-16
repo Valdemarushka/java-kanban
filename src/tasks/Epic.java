@@ -65,7 +65,7 @@ public class Epic extends Task {
         TaskStatus epicStatus;
         if (innerSubTask.isEmpty()) {
             epicStatus = TaskStatus.NEW;
-            System.out.println("empty new ");
+            System.out.println("updateEpicStatus:нет сабтасков. статус - NEW ");
         } else {
             ArrayList<TaskStatus> subStatusList = new ArrayList<>();
             for (SubTask sub : innerSubTask.values()) {
@@ -74,14 +74,14 @@ public class Epic extends Task {
             if (subStatusList.contains(TaskStatus.DONE) && (!subStatusList.contains(TaskStatus.IN_PROGRESS)
                     && !subStatusList.contains(TaskStatus.NEW))) {
                 epicStatus = TaskStatus.DONE;
-                System.out.println("DONE ");
+                System.out.println("updateEpicStatus:статус - DONE ");
             } else if (subStatusList.contains(TaskStatus.NEW) && (!subStatusList.contains(TaskStatus.IN_PROGRESS)
                     && !subStatusList.contains(TaskStatus.DONE))) {
                 epicStatus = TaskStatus.NEW;
-                System.out.println("NEW ");
+                System.out.println("updateEpicStatus:статус - NEW ");
             } else {
                 epicStatus = TaskStatus.IN_PROGRESS;
-                System.out.println("IN_PROGRESS ");
+                System.out.println("updateEpicStatus:статус - IN_PROGRESS ");
             }
         }
         setStatus(epicStatus);
