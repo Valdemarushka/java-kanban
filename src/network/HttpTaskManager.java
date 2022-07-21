@@ -20,10 +20,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private String API_TOKEN;
     Gson gson;
 
-    //здравствуйте. я спросил у Татьяны, есть ли ограничения на быстроту исправления замечаний. она сказала что их нет.
-    //но на всякий случай и вас предупрежу - я в понедельник уезжаю на 3 дня и буду без интернета.
-    //по этому не смогу до этого времени вносить правки.
-
     public HttpTaskManager(URI KVUri) throws IOException, InterruptedException {
         client = new KVTaskClient(KVUri);
         API_TOKEN = client.getApiToken();
@@ -77,8 +73,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     public void loadTasks() {
-        HashMap<Integer, Task> normalTasksLoaded = gson.fromJson(client.load("task"), new TypeToken<HashMap<Integer, Task>>() {
-        }.getType());
+        HashMap<Integer, Task> normalTasksLoaded = gson.fromJson(client.load("task"),
+                new TypeToken<HashMap<Integer, Task>>() {
+                }.getType());
         if (normalTasksLoaded != null) {
             for (Task task : normalTasksLoaded.values()) {
                 normalTasks.put(task.getId(), task);
@@ -114,9 +111,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-
     void loadHistory() {
-
         ArrayList<Task> historyLoaded = gson.fromJson(client.load("history"), new TypeToken<List<Task>>() {
         }.getType());
         if (historyLoaded != null) {

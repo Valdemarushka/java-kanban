@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -218,8 +217,7 @@ public class HttpTaskServer {
                 default:
                     httpExchange.sendResponseHeaders(405, 0);
             }
-            try (
-                    OutputStream stream = httpExchange.getResponseBody()) {
+            try (OutputStream stream = httpExchange.getResponseBody()) {
                 if (response != null) {
                     stream.write(response.getBytes());
                 }

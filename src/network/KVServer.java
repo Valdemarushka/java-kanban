@@ -6,6 +6,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import static network.KVUrl.*;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
@@ -14,6 +16,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class KVServer {
     public static final int PORT = 8078;
+
     private final String apiToken;
     private final HttpServer kvServer;
     private final Map<String, String> data = new HashMap<>();
@@ -21,9 +24,9 @@ public class KVServer {
     public KVServer() throws IOException {
         apiToken = generateApiToken();
         kvServer = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-        kvServer.createContext("/register", this::register);
-        kvServer.createContext("/save", this::save);
-        kvServer.createContext("/load", this::load);
+        kvServer.createContext(REGISTER_URL, this::register);
+        kvServer.createContext(SAVE_URL, this::save);
+        kvServer.createContext(LOAD_URL, this::load);
     }
 
     public static URI getServerURL() {
@@ -32,16 +35,16 @@ public class KVServer {
 
     private void load(HttpExchange h) {
         try {
-            System.out.println("KVServer: /load");
+            System.out.println("KVServer: " + KVUrl.LOAD_URL);
             if (!hasAuth(h)) {
                 System.out.println("KVServer: Запрос неавторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
                 h.sendResponseHeaders(403, 0);
                 return;
             }
             if ("GET".equals(h.getRequestMethod())) {
-                String key = h.getRequestURI().getPath().substring("/load/".length());
+                String key = h.getRequestURI().getPath().substring((LOAD_URL + "/").length());
                 if (key.isEmpty()) {
-                    System.out.println("KVServer: Key для получения пустой. key указывается в пути: /load/{key}");
+                    System.out.println("KVServer: Key для получения пустой. key указывается в пути: " + LOAD_URL + "/{key}");
                     h.sendResponseHeaders(400, 0);
                     return;
                 }
@@ -74,9 +77,9 @@ public class KVServer {
                 return;
             }
             if ("POST".equals(h.getRequestMethod())) {
-                String key = h.getRequestURI().getPath().substring("/save/".length());
+                String key = h.getRequestURI().getPath().substring((SAVE_URL + "/").length());
                 if (key.isEmpty()) {
-                    System.out.println("KVServer: Key для сохранения пустой. key указывается в пути: /save/{key}");
+                    System.out.println("KVServer: Key для сохранения пустой. key указывается в пути:" + SAVE_URL + "/{key}");
                     h.sendResponseHeaders(400, 0);
                     return;
                 }
@@ -100,12 +103,12 @@ public class KVServer {
 
     private void register(HttpExchange h) throws IOException {
         try {
-            System.out.println("KVServer: /register");
+            System.out.println("KVServer: " + REGISTER_URL);
             if ("GET".equals(h.getRequestMethod())) {
                 sendText(h, apiToken);
                 System.out.println("KVServer:  регистрация прошла успешно");
             } else {
-                System.out.println("/register ждёт GET-запрос, а получил " + h.getRequestMethod());
+                System.out.println(REGISTER_URL + " ждёт GET-запрос, а получил " + h.getRequestMethod());
                 h.sendResponseHeaders(405, 0);
             }
         } finally {
