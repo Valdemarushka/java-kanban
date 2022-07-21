@@ -181,11 +181,9 @@ class HttpTaskManagerTest {
         manager.loadManagerFromKVServer();
         manager.deleteAllSubTask();
         Assertions.assertTrue(manager.subTasks.isEmpty(), "таск не удален");
-
     }
 
     //проверка получения задач
-
     @Test
     void getTaskTest() {
         Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW,
@@ -220,7 +218,6 @@ class HttpTaskManagerTest {
         Assertions.assertEquals(subtask1Equals, manager.subTasks.get(subtask1.getId()));
         Assertions.assertEquals(subtask1Equals,
                 manager.epicTasks.get(epic1.getId()).getInnerSubTask().get(subtask1.getId()));
-
     }
 
     @Test
@@ -292,31 +289,30 @@ class HttpTaskManagerTest {
         Assertions.assertEquals(mapForEquals, manager.viewAllSubtask());
     }
 
-
     @Test
     void updateTaskTest() {
         Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW,
                 LocalDateTime.of(2001, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "11");
         Task task1Upd = new Task(TaskType.TASK, "2004", TaskStatus.IN_PROGRESS,
                 LocalDateTime.of(2006, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "22");
-        Task taskForEuals = task1Upd;
-        taskForEuals.setId(1);
+        Task taskForEquals = task1Upd;
+        taskForEquals.setId(1);
         manager.addTask(task1);
         manager.updateTask(1, task1Upd);
         manager.loadManagerFromKVServer();
-        Assertions.assertEquals(taskForEuals, manager.normalTasks.get(task1.getId()));
+        Assertions.assertEquals(taskForEquals, manager.normalTasks.get(task1.getId()));
     }
 
     @Test
     void updateEpicTest() {
         Epic epic3 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
         Epic epic3Upd = new Epic(TaskType.EPIC, "эпик включающий2010", "56", TaskStatus.NEW);
-        Epic epicForEuals = epic3Upd;
-        epicForEuals.setId(1);
+        Epic epicForEquals = epic3Upd;
+        epicForEquals.setId(1);
         manager.addEpic(epic3);
         manager.updateEpic(1, epic3Upd);
         manager.loadManagerFromKVServer();
-        Assertions.assertEquals(epicForEuals, manager.epicTasks.get(epic3.getId()));
+        Assertions.assertEquals(epicForEquals, manager.epicTasks.get(epic3.getId()));
     }
 
     @Test
@@ -328,16 +324,16 @@ class HttpTaskManagerTest {
                 LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
         SubTask subtask5Upd = new SubTask(TaskType.SUBTASK, "2010", TaskStatus.DONE,
                 LocalDateTime.of(2010, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
-        SubTask subtaskForEuals = subtask5Upd;
-        subtaskForEuals.setId(2);
+        SubTask subtaskForEquals = subtask5Upd;
+        subtaskForEquals.setId(2);
         manager.addSubTask(subtask5);
         manager.updateSubTask(2, subtask5Upd);
         manager.loadManagerFromKVServer();
-        Assertions.assertEquals(subtaskForEuals, manager.subTasks.get(subtask5.getId()));
+        Assertions.assertEquals(subtaskForEquals, manager.subTasks.get(subtask5.getId()));
     }
 
     @Test
-    void saveHistoryTest() throws IOException, URISyntaxException, InterruptedException {
+    void saveHistoryTest() {
         Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW,
                 LocalDateTime.of(2001, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "11");
         Task task2 = new Task(TaskType.TASK, "2002", TaskStatus.NEW,

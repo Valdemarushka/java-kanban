@@ -85,7 +85,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
             }
         }
 
-
         HashMap<Integer, Epic> epicTasksLoaded = gson.fromJson(client.load("epic"),
                 new TypeToken<HashMap<Integer, Epic>>() {
                 }.getType());
