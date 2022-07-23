@@ -24,10 +24,10 @@ public class HttpTaskServer {
     private static final int PORT = 8080;
     HttpServer httpServer;
 
-    public HttpTaskServer(TaskManager httpManager) throws IOException {
+    public HttpTaskServer(TaskManager manager) throws IOException {
         httpServer = HttpServer.create();
         httpServer.bind(new InetSocketAddress("localhost", PORT), 0);
-        httpServer.createContext("/tasks", new HttpTaskHandler(httpManager));
+        httpServer.createContext("/tasks", new HttpTaskHandler(manager));
     }
 
     public void start() {
@@ -45,6 +45,7 @@ public class HttpTaskServer {
         private final Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .setPrettyPrinting()
                 .serializeNulls()
                 .create();
 
@@ -72,6 +73,14 @@ public class HttpTaskServer {
                         } catch (ManagerSaveException e) {
                             httpExchange.sendResponseHeaders(404, 0);
                         }
+                    } else if (path.contains("/subtask/epic/") && uri.getRawQuery() != null) {
+                        Integer id = getIdFromExchange(httpExchange);
+                        try {
+                            response = gson.toJson(manager.getEpicById(id).getInnerSubTask());
+                            httpExchange.sendResponseHeaders(200, 0);
+                        } catch (ManagerSaveException e) {
+                            httpExchange.sendResponseHeaders(404, 0);
+                        }
                     } else if (path.endsWith("/epic/") && uri.getRawQuery() == null) {
                         response = gson.toJson(manager.viewAllEpic());
                         httpExchange.sendResponseHeaders(200, 0);
@@ -83,21 +92,13 @@ public class HttpTaskServer {
                         } catch (ManagerSaveException e) {
                             httpExchange.sendResponseHeaders(404, 0);
                         }
-                    } else if (path.contains("/subtask/epic")) {
-                        Integer id = getIdFromExchange(httpExchange);
-                        try {
-                            response = gson.toJson(manager.getEpicById(id).getInnerSubTask().values());
-                            httpExchange.sendResponseHeaders(200, 0);
-                        } catch (ManagerSaveException e) {
-                            httpExchange.sendResponseHeaders(404, 0);
-                        }
                     } else if (path.endsWith("/subtask/") && uri.getRawQuery() == null) {
                         response = gson.toJson(manager.viewAllSubtask());
                         httpExchange.sendResponseHeaders(200, 0);
                     } else if (path.contains("/subtask/") && uri.getRawQuery() != null) {
                         Integer id = getIdFromExchange(httpExchange);
                         try {
-                            response = gson.toJson(manager.getEpicById(id));
+                            response = gson.toJson(manager.getSubTaskById(id));
                             httpExchange.sendResponseHeaders(200, 0);
                         } catch (ManagerSaveException e) {
                             httpExchange.sendResponseHeaders(404, 0);
@@ -106,7 +107,7 @@ public class HttpTaskServer {
                         response = gson.toJson(manager.getPrioritizedTasks());
                         httpExchange.sendResponseHeaders(200, 0);
                     }
-                    if (path.endsWith("/history")) {
+                    if (path.endsWith("/history/")) {
                         response = gson.toJson(manager.getTaskHistory());
                         httpExchange.sendResponseHeaders(200, 0);
                     }
@@ -118,6 +119,7 @@ public class HttpTaskServer {
                         if (taskFromJson.getId() == null) {
                             try {
                                 manager.addTask(taskFromJson);
+
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);

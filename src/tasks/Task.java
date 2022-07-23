@@ -93,6 +93,15 @@ public class Task {
         this.type = type;
     }
 
+    public String getIdInString() {
+        if (id == null) {
+            return null;
+        } else {
+            return id.toString();
+        }
+
+    }
+
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
@@ -101,6 +110,13 @@ public class Task {
             formatDateTime = "null";
         } else {
             formatDateTime = startTime.format(formatter);
+        }
+
+        String idString;
+        if (id == null) {
+            idString = "null";
+        } else {
+            idString = id.toString();
         }
 
         String taskStatus;
@@ -117,7 +133,8 @@ public class Task {
             taskDuration = duration.toString();
         }
 
-        return String.join(",", id.toString(), type.toString(), name, taskStatus, formatDateTime,
+
+        return String.join(",", idString, type.toString(), name, taskStatus, formatDateTime,
                 taskDuration, description);
     }
 }

@@ -35,7 +35,6 @@ public class KVServer {
 
     private void load(HttpExchange h) {
         try {
-            System.out.println("KVServer: " + KVUrl.LOAD_URL);
             if (!hasAuth(h)) {
                 System.out.println("KVServer: Запрос неавторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
                 h.sendResponseHeaders(403, 0);
@@ -50,7 +49,6 @@ public class KVServer {
                 }
                 if (data.containsKey(key)) {
                     sendText(h, " ");
-                    System.out.println("KVServer: значение ключа " + key + " отправленно.");
                     h.sendResponseHeaders(200, 0);
                 } else {
                     System.out.println("KVServer: ключа " + key + " нет");
@@ -90,7 +88,6 @@ public class KVServer {
                     return;
                 }
                 data.put(key, value);
-                System.out.println("KVServer:Значение для ключа " + key + " успешно обновлено!");
                 h.sendResponseHeaders(200, 0);
             } else {
                 System.out.println("KVServer: /save ждёт POST-запрос, а получил: " + h.getRequestMethod());

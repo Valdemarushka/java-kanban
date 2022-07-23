@@ -49,7 +49,6 @@ public class KVTaskClient {
                     .header("Accept", "application/json")
                     .build();
             client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            System.out.println("CLIENT:запрос сохранения отправлен");
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

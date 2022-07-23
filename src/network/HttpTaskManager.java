@@ -35,34 +35,27 @@ public class HttpTaskManager extends FileBackedTasksManager {
     @Override
     public void save() {
         if (viewAllTask().isEmpty()) {
-            System.out.println("HTTPM: Тасков нет");//эти пометки сделаны для себя, что бы понимать где что делается.
         } else {
             String taskToGson = gson.toJson(viewAllTask());
             client.put("task", taskToGson);
-            System.out.println("HTTPM: обновление тасков завершено");
+
         }
 
         if (viewAllEpic().isEmpty()) {
-            System.out.println("HTTPM: Эпиков нет");
         } else {
             String epicToGson = gson.toJson(viewAllEpic());
             client.put("epic", epicToGson);
-            System.out.println("HTTPM: обновление эпиков завершено");
         }
 
         if (viewAllSubtask().isEmpty()) {
-            System.out.println("HTTPM: Сабтасков нет");
         } else {
             String subtaskToGson = gson.toJson(viewAllSubtask());
             client.put("subtask", subtaskToGson);
-            System.out.println("HTTPM: обновление сабтасков завершено");
         }
         if (getTaskHistory() == null || getTaskHistory().isEmpty()) {
-            System.out.println("HTTPM: Истории нет");
         } else {
             String historyToGson = gson.toJson(getTaskHistory());
             client.put("history", historyToGson);
-            System.out.println("HTTPM: обновление истории завершено");
         }
     }
 
