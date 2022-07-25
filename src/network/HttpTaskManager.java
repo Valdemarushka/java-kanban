@@ -35,6 +35,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     @Override
     public void save() {
         if (viewAllTask().isEmpty()) {
+            System.out.println("таски пусты");
         } else {
             String taskToGson = gson.toJson(viewAllTask());
             client.put("task", taskToGson);
@@ -42,17 +43,20 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
 
         if (viewAllEpic().isEmpty()) {
+            System.out.println("эпики пусты");
         } else {
             String epicToGson = gson.toJson(viewAllEpic());
             client.put("epic", epicToGson);
         }
 
         if (viewAllSubtask().isEmpty()) {
+            System.out.println("сабтаски пусты");
         } else {
             String subtaskToGson = gson.toJson(viewAllSubtask());
             client.put("subtask", subtaskToGson);
         }
         if (getTaskHistory() == null || getTaskHistory().isEmpty()) {
+            System.out.println("история пуста");
         } else {
             String historyToGson = gson.toJson(getTaskHistory());
             client.put("history", historyToGson);

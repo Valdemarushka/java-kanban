@@ -214,6 +214,15 @@ public class InMemoryTaskManager implements TaskManager {
         return null;
     }
 
+
+    public Epic getEpicByIdNotHistory(Integer id) {
+        if (epicTasks != null && epicTasks.containsKey(id)) {
+            historyManager.add(epicTasks.get(id));
+            return epicTasks.get(id);
+        }
+        return null;
+    }
+
     @Override
     public SubTask getSubTaskById(Integer id) {
         if (subTasks != null && subTasks.containsKey(id)) {
@@ -302,6 +311,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getTaskHistory() {
-            return historyManager.getHistory();
+        return historyManager.getHistory();
     }
 }

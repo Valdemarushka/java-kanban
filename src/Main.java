@@ -1,9 +1,8 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import managers.Managers;
 import managers.TaskManager;
-import network.HttpTaskManager;
-import network.HttpTaskServer;
-import network.KVServer;
-import network.KVTaskClient;
+import network.*;
 import tasks.*;
 
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.time.LocalDateTime;
 public class Main {
 
     public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
+
 
         Integer id = null;
         System.out.println(id);
@@ -31,12 +31,84 @@ public class Main {
 
         System.out.println("______________ создание задач");
 
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .registerTypeAdapter(SubTask.class, new SubTaskAdapter())
+                .setPrettyPrinting()
+                .serializeNulls()
+                .create();
+
+        Task task1 = new Task(TaskType.TASK, null, TaskStatus.NEW,
+                LocalDateTime.of(2001, 1, 1, 1, 1, 1),
+                Duration.ofMinutes(20), "11");
+        manager.addTask(task1);
+        manager.getTaskById(1);
+
         Epic epic3 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        manager.addEpic(epic3);
+        manager.getTaskById(2);
+
+        SubTask subtask5 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 2);
+        manager.addSubTask(subtask5);
+        manager.getTaskById(3);
+        System.out.println(gson.toJson(epic3));
+        System.out.println(subtask5.getDuration().toString());
+
+
+        /*Epic epic3 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
         SubTask subtask5 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
                 LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
         manager.addEpic(epic3);
         manager.addSubTask(subtask5);
-        System.out.println(manager.getEpicById(1).getInnerSubTask());
+        System.out.println(manager.getEpicById(1).getInnerSubTask());*/
+
+        /*Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .setPrettyPrinting()
+                .serializeNulls()
+                .create();
+
+        Task task1 = new Task(TaskType.TASK, null, TaskStatus.NEW,
+                LocalDateTime.of(2001, 1, 1, 1, 1, 1),
+                Duration.ofMinutes(20), "11");
+        System.out.println(gson.toJson(task1));
+        Task task2 = gson.fromJson(gson.toJson(task1), Task.class);
+        System.out.println(gson.toJson(task2));
+
+
+        Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        epic1.setId(1);
+        System.out.println(gson.toJson(epic1));
+
+        Epic epicFromSer = gson.fromJson(gson.toJson(epic1), Epic.class);
+        System.out.println(gson.toJson(epicFromSer));
+
+
+        SubTask subtask1 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 2);
+
+        System.out.println(gson.toJson(subtask1));
+        SubTask subtask2 = gson.fromJson(gson.toJson(subtask1), SubTask.class);
+        System.out.println(gson.toJson(subtask2));
+
+
+        System.out.println(gson.toJson(subtask2));
+        SubTask subFromSer = gson.fromJson(gson.toJson(subtask2), SubTask.class);
+        System.out.println(gson.toJson(subFromSer));
+*/
+       /* String sub2 = gson.toJson(subtask2);
+        System.out.println();
+        Epic epicFromSer = gson.fromJson(ep1, Epic.class);
+        SubTask subFromSer = gson.fromJson(sub2, SubTask.class);
+
+        System.out.println(epicFromSer);
+        System.out.println(subFromSer);*/
+
+
+
 
 /*
         Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW,
@@ -68,5 +140,15 @@ public class Main {
         System.out.println("______________ проверка истории" + manager.getTaskHistory());*/
 
 
+    }
+
+    public static Integer getId() {
+        Integer id = 1;
+        return id;
+    }
+
+    public static Integer getId2() {
+        Integer id2 = null;
+        return id2;
     }
 }

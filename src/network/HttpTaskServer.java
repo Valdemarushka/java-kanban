@@ -18,6 +18,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 
 public class HttpTaskServer {
@@ -76,7 +77,11 @@ public class HttpTaskServer {
                     } else if (path.contains("/subtask/epic/") && uri.getRawQuery() != null) {
                         Integer id = getIdFromExchange(httpExchange);
                         try {
-                            response = gson.toJson(manager.getEpicById(id).getInnerSubTask());
+                            Epic epicbyId = manager.getEpicById(id);
+                            System.out.println(gson.toJson(epicbyId));
+                            HashMap<Integer, SubTask> listFromServer = epicbyId.getInnerSubTask();
+                            System.out.println(gson.toJson(listFromServer));
+                            response = gson.toJson(listFromServer);
                             httpExchange.sendResponseHeaders(200, 0);
                         } catch (ManagerSaveException e) {
                             httpExchange.sendResponseHeaders(404, 0);
@@ -116,7 +121,7 @@ public class HttpTaskServer {
                     String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                     if (path.contains("/task/")) {
                         Task taskFromJson = gson.fromJson(body, Task.class);
-                        if (taskFromJson.getId() == null) {
+                        if (uri.getRawQuery() == null) {
                             try {
                                 manager.addTask(taskFromJson);
 
@@ -126,7 +131,8 @@ public class HttpTaskServer {
                             }
                         } else {
                             try {
-                                manager.updateTask(taskFromJson.getId(), taskFromJson);
+                                Integer id = getIdFromExchange(httpExchange);
+                                manager.updateTask(id, taskFromJson);
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
@@ -134,7 +140,7 @@ public class HttpTaskServer {
                         }
                     } else if (path.contains("/epic/")) {
                         Epic epicFromJson = gson.fromJson(body, Epic.class);
-                        if (epicFromJson.getId() == null) {
+                        if (uri.getRawQuery() == null) {
                             try {
                                 manager.addEpic(epicFromJson);
                                 httpExchange.sendResponseHeaders(200, 0);
@@ -143,7 +149,8 @@ public class HttpTaskServer {
                             }
                         } else {
                             try {
-                                manager.updateEpic(epicFromJson.getId(), epicFromJson);
+                                Integer id = getIdFromExchange(httpExchange);
+                                manager.updateEpic(id, epicFromJson);
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
@@ -151,7 +158,7 @@ public class HttpTaskServer {
                         }
                     } else if (path.contains("/subtask/")) {
                         SubTask subtaskFromJson = gson.fromJson(body, SubTask.class);
-                        if (subtaskFromJson.getId() == null) {
+                        if (uri.getRawQuery() == null) {
                             try {
                                 manager.addSubTask(subtaskFromJson);
                                 httpExchange.sendResponseHeaders(200, 0);
@@ -160,7 +167,8 @@ public class HttpTaskServer {
                             }
                         } else {
                             try {
-                                manager.updateSubTask(subtaskFromJson.getId(), subtaskFromJson);
+                                Integer id = getIdFromExchange(httpExchange);
+                                manager.updateSubTask(id, subtaskFromJson);
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
@@ -181,7 +189,9 @@ public class HttpTaskServer {
                         Integer id = getIdFromExchange(httpExchange);
                         try {
                             manager.deleteTaskById(id);
+                            response = gson.toJson("200");
                             httpExchange.sendResponseHeaders(200, 0);
+
                         } catch (ManagerSaveException e) {
                             e.printStackTrace();
                         }

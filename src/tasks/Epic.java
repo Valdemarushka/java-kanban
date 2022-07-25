@@ -2,12 +2,14 @@ package tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task {
     HashMap<Integer, SubTask> innerSubTask = new HashMap();
     LocalDateTime endTime;
+    DateTimeFormatter formatterReader = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
 
     public Epic(TaskType type, String name, String description, TaskStatus status) {
         super(type, name, description, status);
@@ -20,6 +22,14 @@ public class Epic extends Task {
     @Override
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public String getEndTimeString() {
+        if (endTime == null) {
+            return "null";
+        } else {
+            return endTime.format(formatterReader);
+        }
     }
 
     public void refreshTimeEpic() {
