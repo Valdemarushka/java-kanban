@@ -27,8 +27,11 @@ public class SubTask extends Task {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
         String formatDateTime = getStartTime().format(formatter);
 
-
-        return String.join(",", getId().toString(), getType().toString(), getName(), getStatus().toString(),
+        String idString = null;
+        if (getId() != null) {
+            idString = getId().toString();
+        }
+        return String.join(",", idString, getType().toString(), getName(), getStatus().toString(),
                 formatDateTime, getDuration().toString(), getDescription(), getEpicId().toString());
     }
 }

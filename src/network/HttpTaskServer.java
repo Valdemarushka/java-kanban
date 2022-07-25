@@ -121,6 +121,7 @@ public class HttpTaskServer {
                     String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                     if (path.contains("/task/")) {
                         Task taskFromJson = gson.fromJson(body, Task.class);
+                        System.out.println("11");
                         if (uri.getRawQuery() == null) {
                             try {
                                 manager.addTask(taskFromJson);

@@ -4,7 +4,6 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import tasks.Epic;
 import tasks.SubTask;
 import tasks.TaskStatus;
 import tasks.TaskType;
@@ -57,48 +56,32 @@ public class SubTaskAdapter extends TypeAdapter<SubTask> {
         while (reader.hasNext()) {
             JsonToken token = reader.peek();
             if (token.equals(JsonToken.NAME)) {
-                //get the current token
                 fieldname = reader.nextName();
             }
             if ("id".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 id = reader.nextInt();
             }
             if ("epicId".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 epicId = reader.nextInt();
             }
 
             if ("type".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
-                String typeString = reader.nextString();
-                if (typeString.equals("null")) {
-                    type = null;
-                } else if (typeString.equals("TASK")) {
-                    type = TaskType.TASK;
-                } else if (typeString.equals("EPIC")) {
-                    type = TaskType.EPIC;
-                } else {
-                    type = TaskType.SUBTASK;
-                }
+                type = TaskType.SUBTASK;
             }
             if ("name".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 name = reader.nextString();
             }
 
             if ("description".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 description = reader.nextString();
             }
 
             if ("status".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 String typeString = reader.nextString();
                 if (typeString.equals("null")) {
@@ -113,18 +96,16 @@ public class SubTaskAdapter extends TypeAdapter<SubTask> {
             }
 
             if ("duration".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 duration = Duration.parse(reader.nextString());
             }
 
             if ("startTime".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 startTime = LocalDateTime.parse(reader.nextString(), formatterReader);
             }
-            reader.endObject();
         }
+        reader.endObject();
         SubTask subTask = new SubTask(type, name, status, startTime, duration, description, epicId);
         subTask.setId(id);
         return subTask;

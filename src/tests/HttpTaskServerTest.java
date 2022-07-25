@@ -353,12 +353,9 @@ class HttpTaskServerTest {
     void addEpicTest() throws IOException, InterruptedException {
         Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
         epic1.setId(1);
-        System.out.println(gson.toJson(epic1));
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/epic/");
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(epic1));
-        Epic epicFromJson = gson.fromJson(gson.toJson(epic1), Epic.class);
-        System.out.println(gson.toJson(epicFromJson));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriRequest)
                 .POST(body)

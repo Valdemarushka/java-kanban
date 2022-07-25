@@ -24,8 +24,6 @@ public class EpicAdapter extends TypeAdapter<Epic> {
     DateTimeFormatter formatterReader = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
     Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .registerTypeAdapter(SubTask.class, new SubTaskAdapter())
             .setPrettyPrinting()
             .serializeNulls()
             .create();
@@ -66,72 +64,51 @@ public class EpicAdapter extends TypeAdapter<Epic> {
         Duration duration = null;
         LocalDateTime startTime = null;
         LocalDateTime endTime = null;
-        Integer epicId = null;
 
         String fieldname = null;
+
         while (reader.hasNext()) {
             JsonToken token = reader.peek();
             if (token.equals(JsonToken.NAME)) {
-                //get the current token
                 fieldname = reader.nextName();
             }
-
             if ("innerSubTask".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 String innerSubTaskString = reader.nextString();
                 Type typeHashMap = new TypeToken<HashMap<Integer, SubTask>>() {
                 }.getType();
                 innerSubTask = gson.fromJson(innerSubTaskString, typeHashMap);
             }
-
             if ("endTime".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
-
                 if (reader.nextString().equals("null")) {
                     endTime = null;
                 } else {
                     String endTimeString = reader.nextString();
                     endTime = LocalDateTime.parse(endTimeString, formatterReader);
                 }
-
             }
 
             if ("id".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 id = reader.nextInt();
             }
 
             if ("type".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
-                String typeString = reader.nextString();
-                if (typeString.equals("null")) {
-                    type = null;
-                } else if (typeString.equals("TASK")) {
-                    type = TaskType.TASK;
-                } else if (typeString.equals("EPIC")) {
-                    type = TaskType.EPIC;
-                } else {
-                    type = TaskType.SUBTASK;
-                }
+                type = TaskType.EPIC;
             }
             if ("name".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 name = reader.nextString();
             }
 
             if ("description".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 description = reader.nextString();
             }
 
             if ("status".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 String typeString = reader.nextString();
                 if (typeString.equals("null")) {
@@ -146,7 +123,6 @@ public class EpicAdapter extends TypeAdapter<Epic> {
             }
 
             if ("duration".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 if (reader.nextString().equals("null")) {
                     duration = null;
@@ -157,7 +133,6 @@ public class EpicAdapter extends TypeAdapter<Epic> {
             }
 
             if ("startTime".equals(fieldname)) {
-                //move to next token
                 token = reader.peek();
                 if (reader.nextString().equals("null")) {
                     startTime = null;
@@ -165,7 +140,6 @@ public class EpicAdapter extends TypeAdapter<Epic> {
                     startTime = LocalDateTime.parse(reader.nextString(), formatterReader);
                 }
             }
-
         }
 
         Epic epic = new Epic(type, name, description, status);
@@ -175,7 +149,6 @@ public class EpicAdapter extends TypeAdapter<Epic> {
         epic.setDuration(duration);
         epic.setStartTime(startTime);
         epic.setEndTime(endTime);
-
         reader.endObject();
         return epic;
     }
