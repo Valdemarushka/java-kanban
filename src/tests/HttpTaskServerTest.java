@@ -361,10 +361,9 @@ class HttpTaskServerTest {
                 .POST(body)
                 .header("Accept", "application/json")
                 .build();
+        //Вот тут вылетают варнинги о датах.
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println(response.statusCode());
-
-
     }
 
     /*@Test
