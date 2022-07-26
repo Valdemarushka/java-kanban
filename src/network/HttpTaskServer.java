@@ -1,5 +1,7 @@
 package network;
 
+import adapters.DurationAdapter;
+import adapters.LocalDateTimeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
@@ -18,7 +20,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 
 public class HttpTaskServer {
@@ -77,11 +78,7 @@ public class HttpTaskServer {
                     } else if (path.contains("/subtask/epic/") && uri.getRawQuery() != null) {
                         Integer id = getIdFromExchange(httpExchange);
                         try {
-                            Epic epicbyId = manager.getEpicById(id);
-                            System.out.println(gson.toJson(epicbyId));
-                            HashMap<Integer, SubTask> listFromServer = epicbyId.getInnerSubTask();
-                            System.out.println(gson.toJson(listFromServer));
-                            response = gson.toJson(listFromServer);
+                            response = gson.toJson(manager.getEpicById(id).getInnerSubTask());
                             httpExchange.sendResponseHeaders(200, 0);
                         } catch (ManagerSaveException e) {
                             httpExchange.sendResponseHeaders(404, 0);
@@ -121,11 +118,9 @@ public class HttpTaskServer {
                     String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                     if (path.contains("/task/")) {
                         Task taskFromJson = gson.fromJson(body, Task.class);
-                        System.out.println("11");
                         if (uri.getRawQuery() == null) {
                             try {
                                 manager.addTask(taskFromJson);
-
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
@@ -144,6 +139,7 @@ public class HttpTaskServer {
                         if (uri.getRawQuery() == null) {
                             try {
                                 manager.addEpic(epicFromJson);
+
                                 httpExchange.sendResponseHeaders(200, 0);
                             } catch (ManagerSaveException e) {
                                 httpExchange.sendResponseHeaders(400, 0);
@@ -183,6 +179,7 @@ public class HttpTaskServer {
                         try {
                             manager.deleteAllTask();
                             httpExchange.sendResponseHeaders(200, 0);
+                            writeResponse(httpExchange, response);
                         } catch (ManagerSaveException e) {
                             e.printStackTrace();
                         }
@@ -190,16 +187,17 @@ public class HttpTaskServer {
                         Integer id = getIdFromExchange(httpExchange);
                         try {
                             manager.deleteTaskById(id);
-                            response = gson.toJson("200");
                             httpExchange.sendResponseHeaders(200, 0);
-
+                            writeResponse(httpExchange, response);
                         } catch (ManagerSaveException e) {
                             e.printStackTrace();
                         }
                     } else if (path.endsWith("/epic/") && uri.getRawQuery() == null) {
+
                         try {
                             manager.deleteAllEpic();
                             httpExchange.sendResponseHeaders(200, 0);
+                            writeResponse(httpExchange, response);
                         } catch (ManagerSaveException e) {
                             e.printStackTrace();
                         }
@@ -208,6 +206,7 @@ public class HttpTaskServer {
                         try {
                             manager.deleteEpicById(id);
                             httpExchange.sendResponseHeaders(200, 0);
+                            writeResponse(httpExchange, response);
                         } catch (ManagerSaveException e) {
                             e.printStackTrace();
                         }
@@ -215,6 +214,7 @@ public class HttpTaskServer {
                         try {
                             manager.deleteAllSubTask();
                             httpExchange.sendResponseHeaders(200, 0);
+                            writeResponse(httpExchange, response);
                         } catch (ManagerSaveException e) {
                             e.printStackTrace();
                         }
@@ -223,18 +223,28 @@ public class HttpTaskServer {
                         try {
                             manager.deleteSubTaskById(id);
                             httpExchange.sendResponseHeaders(200, 0);
+                            writeResponse(httpExchange, response);
                         } catch (ManagerSaveException e) {
                             e.printStackTrace();
                         }
+
                     }
                 default:
+                    System.out.println("Использован неизвестный метод");
                     httpExchange.sendResponseHeaders(405, 0);
+
             }
             try (OutputStream stream = httpExchange.getResponseBody()) {
                 if (response != null) {
                     stream.write(response.getBytes());
                 }
             }
+        }
+    }
+
+    private void writeResponse(HttpExchange exchange, String response) throws IOException {
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(response.getBytes());
         }
     }
 

@@ -1,10 +1,14 @@
 package tests;
 
+import adapters.DurationAdapter;
+
+import adapters.LocalDateTimeAdapter;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import managers.Managers;
 import network.*;
+
 import org.junit.jupiter.api.Assertions;
 import tasks.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +17,9 @@ import org.junit.jupiter.api.AfterEach;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,8 +31,6 @@ class HttpTaskServerTest {
     Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .registerTypeAdapter(Duration.class, new DurationAdapter())
-            .registerTypeAdapter(SubTask.class, new SubTaskAdapter())
-            .registerTypeAdapter(Epic.class, new EpicAdapter())
             .setPrettyPrinting()
             .serializeNulls()
             .create();
@@ -62,6 +62,7 @@ class HttpTaskServerTest {
         httpTaskServer.stop();
     }
 
+    //Проверка получения
     @Test
     void getAllTasksTest() throws IOException, InterruptedException {
         Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW,
@@ -92,6 +93,7 @@ class HttpTaskServerTest {
         Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW,
                 LocalDateTime.of(2001, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "11");
         manager.addTask(task1);
+
 
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/task/?id=1");
@@ -215,32 +217,28 @@ class HttpTaskServerTest {
     }
 
     @Test
-        //Почему тут вылазит исключение?
     void getSubTaskOfEpicTest() throws IOException, InterruptedException {
         Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
         manager.addEpic(epic1);
+
+
         SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
                 LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
-
         manager.addSubTask(subtask3);
         System.out.println("1");
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/subtask/epic/?id=1");
-        System.out.println("2");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriRequest)
                 .GET()
                 .header("Accept", "application/json")
                 .build();
-        System.out.println("3");
+        System.out.println("2");
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
+        System.out.println("3");
         HashMap<Integer, SubTask> listFromServer = gson.fromJson(response.body(), new TypeToken<HashMap<Integer, SubTask>>() {
         }.getType());
-
-        HashMap<Integer, SubTask> listEuqals = epic1.getInnerSubTask();
-
-        Assertions.assertEquals(listFromServer.toString(), listEuqals.toString());
+        Assertions.assertEquals(listFromServer.toString(), epic1.getInnerSubTask().toString());
         Assertions.assertEquals(200, response.statusCode());
     }
 
@@ -297,6 +295,8 @@ class HttpTaskServerTest {
         Assertions.assertEquals(200, response.statusCode());
     }
 
+
+    //Проверка добавления
     @Test
     void addTaskTest() throws IOException, InterruptedException {
         Task task1 = new Task(TaskType.TASK, "2001добавленный", TaskStatus.NEW,
@@ -348,11 +348,18 @@ class HttpTaskServerTest {
 
     }
 
-
     @Test
     void addEpicTest() throws IOException, InterruptedException {
         Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
-        epic1.setId(1);
+        epic1.setStartTime(LocalDateTime.of(2001, 1, 1, 1, 1, 1));
+        epic1.setEndTime(LocalDateTime.of(2001, 1, 1, 1, 20, 1));
+        epic1.setDuration(Duration.ofMinutes(20));
+        // В общем тут я не смог разобраться почему адаптер даты не пропускает null-евые значения. пришлось заполнять
+        // вручную. Можете подсказать почему при попытке добавить эпик с null-евыми датами адаптер ругается
+        // на то что передается нулл, а не стринг? 3 дня бился, несколко раз переписывал все откатываясь на
+        // начальное состояние проекта. Наставник молчит, одногруппники не могут помочь.
+
+
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/epic/");
         HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(epic1));
@@ -361,18 +368,26 @@ class HttpTaskServerTest {
                 .POST(body)
                 .header("Accept", "application/json")
                 .build();
-        //Вот тут вылетают варнинги о датах.
+
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.statusCode());
+        Assertions.assertEquals(manager.getEpicById(1).getName(), epic1.getName());
+        Assertions.assertEquals(200, response.statusCode());
     }
 
-    /*@Test
-        //Почему тут вылазит исключение?
+    @Test
     void updateEpicTest() throws IOException, InterruptedException {
         Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        manager.addEpic(epic1);
+        SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
+        manager.addSubTask(subtask3);
+
+
+        Epic epic2 = epic1;
+        epic2.setName("обновленный");
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/epic/?id=1");
-        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(epic1));
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(epic2));
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uriRequest)
                 .POST(body)
@@ -380,16 +395,63 @@ class HttpTaskServerTest {
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Assertions.assertEquals(200, response.statusCode());
-    }*/
+        Assertions.assertEquals(epic2.getName(), manager.getEpicById(epic1.getId()).getName());
+    }
+
+    @Test
+    void addSubTaskTest() throws IOException, InterruptedException {
+        Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        manager.addEpic(epic1);
+
+        SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI uriRequest = URI.create("http://localhost:8080/tasks/subtask/");
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(subtask3));
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriRequest)
+                .POST(body)
+                .header("Accept", "application/json")
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertEquals(manager.getSubTaskById(2).getName(), subtask3.getName());
+        Assertions.assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    void updateSubTaskTest() throws IOException, InterruptedException {
+        Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        manager.addEpic(epic1);
+        SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
+        manager.addSubTask(subtask3);
 
 
+        SubTask subTaskUpd = subtask3;
+        subTaskUpd.setName("обновленный");
+        HttpClient client = HttpClient.newHttpClient();
+        URI uriRequest = URI.create("http://localhost:8080/tasks/epic/?id=1");
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(subTaskUpd));
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriRequest)
+                .POST(body)
+                .header("Accept", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertEquals(subTaskUpd.getName(), manager.getSubTaskById(subtask3.getId()).getName());
+    }
+
+
+    //Проверка удаления
     @Test
     void deleteAllTaskTest() throws IOException, InterruptedException {
         Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW,
                 LocalDateTime.of(2001, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "11");
         manager.addTask(task1);
 
-        System.out.println("формирование ии отправка запроса");
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/task/");
         HttpRequest request = HttpRequest.newBuilder()
@@ -398,8 +460,6 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.statusCode());
-
         Assertions.assertTrue(manager.viewAllTask().isEmpty());
         Assertions.assertEquals(200, response.statusCode());
     }
@@ -409,8 +469,6 @@ class HttpTaskServerTest {
         Task task1 = new Task(TaskType.TASK, "2001", TaskStatus.NEW,
                 LocalDateTime.of(2001, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "11");
         manager.addTask(task1);
-
-        System.out.println("формирование ии отправка запроса");
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/task/?id=1");
         HttpRequest request = HttpRequest.newBuilder()
@@ -419,9 +477,94 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println(response.statusCode());
+        Assertions.assertNull(manager.getTaskById(task1.getId()));
+        Assertions.assertEquals(200, response.statusCode());
+    }
 
-        Assertions.assertNull(manager.getTaskById(1));
+    @Test
+    void deleteAllEpicTest() throws IOException, InterruptedException {
+        Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        manager.addEpic(epic1);
+
+        SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
+        manager.addSubTask(subtask3);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI uriRequest = URI.create("http://localhost:8080/tasks/epic/");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriRequest)
+                .DELETE()
+                .header("Accept", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertTrue(manager.viewAllEpic().isEmpty());
+        Assertions.assertTrue(manager.viewAllSubtask().isEmpty());
+        Assertions.assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    void deleteEpicByIdTest() throws IOException, InterruptedException {
+        Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        manager.addEpic(epic1);
+
+        SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
+        manager.addSubTask(subtask3);
+        HttpClient client = HttpClient.newHttpClient();
+        URI uriRequest = URI.create("http://localhost:8080/tasks/epic/?id=1");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriRequest)
+                .DELETE()
+                .header("Accept", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertTrue(manager.viewAllEpic().isEmpty());
+        Assertions.assertTrue(manager.viewAllSubtask().isEmpty());
+        Assertions.assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    void deleteAllSubTaskTest() throws IOException, InterruptedException {
+        Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        manager.addEpic(epic1);
+
+        SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
+        manager.addSubTask(subtask3);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI uriRequest = URI.create("http://localhost:8080/tasks/subtask/");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriRequest)
+                .DELETE()
+                .header("Accept", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Assertions.assertTrue(manager.viewAllSubtask().isEmpty());
+        Assertions.assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    void deleteSubTaskByIdTest() throws IOException, InterruptedException {
+        Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
+        manager.addEpic(epic1);
+
+
+        SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
+                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
+        manager.addSubTask(subtask3);
+        HttpClient client = HttpClient.newHttpClient();
+        URI uriRequest = URI.create("http://localhost:8080/tasks/subtask/?id=2");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(uriRequest)
+                .DELETE()
+                .header("Accept", "application/json")
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(manager.viewAllSubtask());
+
+        Assertions.assertTrue(manager.viewAllSubtask().isEmpty());
         Assertions.assertEquals(200, response.statusCode());
     }
 

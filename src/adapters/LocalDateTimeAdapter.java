@@ -1,4 +1,4 @@
-package network;
+package adapters;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -22,6 +22,12 @@ public class LocalDateTimeAdapter extends TypeAdapter<LocalDateTime> {
 
     @Override
     public LocalDateTime read(final JsonReader jsonReader) throws IOException {
-        return LocalDateTime.parse(jsonReader.nextString(), formatterReader);
+        String value = jsonReader.nextString();//вот эта строчка вызывыет ошибки, при null значениях даты в эпиках
+        if (value != null) {
+            return LocalDateTime.parse(value, formatterReader);
+        } else {
+            return null;
+        }
+
     }
 }

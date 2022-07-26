@@ -16,7 +16,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
 
-
+/*
         Integer id = null;
         System.out.println(id);
 
@@ -29,33 +29,7 @@ public class Main {
         System.out.println("______________ Запуск http сервера менеджера");
         new HttpTaskServer(manager).start();
 
-        System.out.println("______________ создание задач");
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
-                .registerTypeAdapter(SubTask.class, new SubTaskAdapter())
-                .setPrettyPrinting()
-                .serializeNulls()
-                .create();
-
-        Task task1 = new Task(TaskType.TASK, null, TaskStatus.NEW,
-                LocalDateTime.of(2001, 1, 1, 1, 1, 1),
-                Duration.ofMinutes(20), "11");
-        manager.addTask(task1);
-        manager.getTaskById(1);
-
-        Epic epic3 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
-        manager.addEpic(epic3);
-        manager.getTaskById(2);
-
-        SubTask subtask5 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
-                LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 2);
-        manager.addSubTask(subtask5);
-        manager.getTaskById(3);
-        System.out.println(gson.toJson(epic3));
-        System.out.println(subtask5.getDuration().toString());
-
+        System.out.println("______________ создание задач");*/
 
         /*Epic epic3 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
         SubTask subtask5 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
@@ -140,15 +114,5 @@ public class Main {
         System.out.println("______________ проверка истории" + manager.getTaskHistory());*/
 
 
-    }
-
-    public static Integer getId() {
-        Integer id = 1;
-        return id;
-    }
-
-    public static Integer getId2() {
-        Integer id2 = null;
-        return id2;
     }
 }

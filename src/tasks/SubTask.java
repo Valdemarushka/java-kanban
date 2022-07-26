@@ -13,7 +13,6 @@ public class SubTask extends Task {
         this.epicId = epicId;
     }
 
-
     public Integer getEpicId() {
         return epicId;
     }
@@ -27,11 +26,8 @@ public class SubTask extends Task {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
         String formatDateTime = getStartTime().format(formatter);
 
-        String idString = null;
-        if (getId() != null) {
-            idString = getId().toString();
-        }
-        return String.join(",", idString, getType().toString(), getName(), getStatus().toString(),
+
+        return String.join(",", getId().toString(), getType().toString(), getName(), getStatus().toString(),
                 formatDateTime, getDuration().toString(), getDescription(), getEpicId().toString());
     }
 }

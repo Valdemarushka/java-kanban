@@ -108,7 +108,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.addSubTask(subtask4);
         Assertions.assertFalse(taskManager.viewAllSubtask().isEmpty(), "пусто");
         taskManager.deleteSubTaskById(subtask4.getId());
-        Assertions.assertNotNull(taskManager.getSubTaskById(subtask4.getId()), "не пуста");
+        Assertions.assertTrue(taskManager.viewAllSubtask().isEmpty(), "не пуста");
     }
 
     @Test

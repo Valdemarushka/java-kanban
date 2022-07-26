@@ -1,3 +1,4 @@
+/*
 package network;
 
 import com.google.gson.TypeAdapter;
@@ -52,55 +53,61 @@ public class SubTaskAdapter extends TypeAdapter<SubTask> {
         LocalDateTime startTime = null;
         Integer epicId = null;
 
-        String fieldname = null;
+        String fieldName = null;
         while (reader.hasNext()) {
             JsonToken token = reader.peek();
             if (token.equals(JsonToken.NAME)) {
-                fieldname = reader.nextName();
+                fieldName = reader.nextName();
             }
-            if ("id".equals(fieldname)) {
+            if ("id".equals(fieldName)) {
                 token = reader.peek();
                 id = reader.nextInt();
             }
-            if ("epicId".equals(fieldname)) {
+            if ("epicId".equals(fieldName)) {
                 token = reader.peek();
                 epicId = reader.nextInt();
             }
 
-            if ("type".equals(fieldname)) {
+
+            if ("type".equals(fieldName)) {
                 token = reader.peek();
                 type = TaskType.SUBTASK;
             }
-            if ("name".equals(fieldname)) {
+            if ("name".equals(fieldName)) {
                 token = reader.peek();
                 name = reader.nextString();
             }
 
-            if ("description".equals(fieldname)) {
+            if ("description".equals(fieldName)) {
                 token = reader.peek();
                 description = reader.nextString();
             }
 
-            if ("status".equals(fieldname)) {
+            if ("status".equals(fieldName)) {
                 token = reader.peek();
                 String typeString = reader.nextString();
-                if (typeString.equals("null")) {
-                    status = null;
-                } else if (typeString.equals("NEW")) {
-                    status = TaskStatus.NEW;
-                } else if (typeString.equals("IN_PROGRESS")) {
-                    status = TaskStatus.IN_PROGRESS;
-                } else {
-                    status = TaskStatus.DONE;
+                switch (typeString) {
+                    case "null":
+                        status = null;
+                        break;
+                    case "DONE":
+                        status = TaskStatus.DONE;
+                        break;
+                    case "IN_PROGRESS":
+                        status = TaskStatus.IN_PROGRESS;
+                        break;
+                    default:
+                        status = TaskStatus.NEW;
+                        break;
                 }
             }
 
-            if ("duration".equals(fieldname)) {
+            if ("duration".equals(fieldName)) {
                 token = reader.peek();
                 duration = Duration.parse(reader.nextString());
             }
 
-            if ("startTime".equals(fieldname)) {
+            if ("startTime".equals(fieldName)) {
                 token = reader.peek();
                 startTime = LocalDateTime.parse(reader.nextString(), formatterReader);
             }
@@ -112,3 +119,4 @@ public class SubTaskAdapter extends TypeAdapter<SubTask> {
     }
 }
 
+*/

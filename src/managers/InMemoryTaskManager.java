@@ -156,7 +156,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTaskById(Integer id) {
         if (normalTasks != null && sortedTasks != null && historyManager != null && normalTasks.containsKey(id)) {
             sortedTasks.remove(normalTasks.get(id));
-            historyManager.remove(id);
+            if (historyManager.getHistory().contains(normalTasks.get(id))) {
+                historyManager.remove(id);
+            }
             normalTasks.remove(id);
         }
     }
@@ -177,7 +179,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteSubTaskById(Integer id) {
-        if (subTasks.containsKey(id) && epicTasks != null && epicTasks.containsKey(id) && sortedTasks != null) {
+        if (subTasks.containsKey(id) && epicTasks != null && sortedTasks != null) {
             SubTask subTaskForDelete = subTasks.get(id);
             sortedTasks.remove(subTaskForDelete);
             Epic epicForUpdate = epicTasks.get(subTaskForDelete.getEpicId());
@@ -191,8 +193,10 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.remove(id);
             subTasks.remove(id);
             System.out.println("сабтаск удален");
-
+        } else {
+            System.out.println("сабтаск не удален");
         }
+
     }
 
     //__________Получение задач__________
@@ -207,15 +211,6 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(Integer id) {
-        if (epicTasks != null && epicTasks.containsKey(id)) {
-            historyManager.add(epicTasks.get(id));
-            return epicTasks.get(id);
-        }
-        return null;
-    }
-
-
-    public Epic getEpicByIdNotHistory(Integer id) {
         if (epicTasks != null && epicTasks.containsKey(id)) {
             historyManager.add(epicTasks.get(id));
             return epicTasks.get(id);

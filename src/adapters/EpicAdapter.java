@@ -1,4 +1,6 @@
-package network;
+/*
+
+package adapters;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,18 +25,23 @@ public class EpicAdapter extends TypeAdapter<Epic> {
 
     DateTimeFormatter formatterReader = DateTimeFormatter.ofPattern("dd.MM.yyyy|HH:mm");
     Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .setPrettyPrinting()
             .serializeNulls()
             .create();
 
+
     @Override
     public void write(JsonWriter writer, Epic epic) throws IOException {
         writer.beginObject();
+
         writer.name("innerSubTask");
-        writer.value(epic.getInnerSubTask().toString());
+        writer.value(gson.toJson(epic.getInnerSubTask()));
         writer.name("endTime");
-        writer.value(epic.getEndTimeString());
+        if (epic.getDuration() != null) {
+            writer.value(epic.getEndTime().toString());
+        } else {
+            writer.nullValue();
+        }
         writer.name("id");
         writer.value(epic.getId());
         writer.name("type");
@@ -46,9 +53,17 @@ public class EpicAdapter extends TypeAdapter<Epic> {
         writer.name("status");
         writer.value(epic.getStatus().toString());
         writer.name("duration");
-        writer.value(epic.getDurationString());
+        if (epic.getDuration() != null) {
+            writer.value(epic.getDuration().toString());
+        } else {
+            writer.nullValue();
+        }
         writer.name("startTime");
-        writer.value(epic.getStartTimeString());
+        if (epic.getDuration() != null) {
+            writer.value(epic.getStartTime().toString());
+        } else {
+            writer.nullValue();
+        }
         writer.endObject();
     }
 
@@ -111,14 +126,19 @@ public class EpicAdapter extends TypeAdapter<Epic> {
             if ("status".equals(fieldname)) {
                 token = reader.peek();
                 String typeString = reader.nextString();
-                if (typeString.equals("null")) {
-                    status = null;
-                } else if (typeString.equals("NEW")) {
-                    status = TaskStatus.NEW;
-                } else if (typeString.equals("IN_PROGRESS")) {
-                    status = TaskStatus.IN_PROGRESS;
-                } else {
-                    status = TaskStatus.DONE;
+                switch (typeString) {
+                    case "null":
+                        status = null;
+                        break;
+                    case "DONE":
+                        status = TaskStatus.DONE;
+                        break;
+                    case "IN_PROGRESS":
+                        status = TaskStatus.IN_PROGRESS;
+                        break;
+                    default:
+                        status = TaskStatus.NEW;
+                        break;
                 }
             }
 
@@ -129,7 +149,6 @@ public class EpicAdapter extends TypeAdapter<Epic> {
                 } else {
                     duration = Duration.parse(reader.nextString());
                 }
-
             }
 
             if ("startTime".equals(fieldname)) {
@@ -153,4 +172,4 @@ public class EpicAdapter extends TypeAdapter<Epic> {
         return epic;
     }
 }
-
+*/

@@ -37,6 +37,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest {
         taskManager.addEpic(epic3);
         assertTrue(taskManager.getTaskHistory().isEmpty(), "история не пуста");
         TaskManager taskManager2 = new FileBackedTasksManager();
+        System.out.println("111111" + taskManager2.viewAllSubtask());
         assertTrue(taskManager2.getTaskHistory().isEmpty(), "история не пуста");
         assertFalse(taskManager2.viewAllEpic().isEmpty(), "таск не восстановился");
     }
