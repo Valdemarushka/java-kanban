@@ -80,8 +80,6 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("_________" + response.statusCode() + response.body());
-
         HashMap<Integer, Task> mapFromServer = gson.fromJson(response.body(), new TypeToken<HashMap<Integer, Task>>() {
         }.getType());
         Assertions.assertEquals(manager.viewAllTask().toString(), mapFromServer.toString());
@@ -94,7 +92,6 @@ class HttpTaskServerTest {
                 LocalDateTime.of(2001, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "11");
         manager.addTask(task1);
 
-
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/task/?id=1");
         HttpRequest request = HttpRequest.newBuilder()
@@ -103,7 +100,6 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("_________" + response.statusCode());
         Task taskFromServer = gson.fromJson(response.body(), Task.class);
         Assertions.assertEquals(task1.toString(), taskFromServer.toString());
         Assertions.assertEquals(200, response.statusCode());
@@ -130,7 +126,6 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("_________" + response.statusCode());
         HashMap<Integer, Epic> mapFromServer = gson.fromJson(response.body(), new TypeToken<HashMap<Integer, Epic>>() {
         }.getType());
         Assertions.assertEquals(manager.viewAllEpic().toString(), mapFromServer.toString());
@@ -154,7 +149,6 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("_________" + response.statusCode());
 
         Epic epicFromServer = gson.fromJson(response.body(), Epic.class);
         Assertions.assertEquals(epic1.toString(), epicFromServer.toString());
@@ -182,11 +176,9 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("_________" + response.statusCode());
         HashMap<Integer, SubTask> mapFromServer = gson.fromJson(response.body(), new TypeToken<HashMap<Integer, SubTask>>() {
         }.getType());
         Assertions.assertEquals(manager.viewAllSubtask().toString(), mapFromServer.toString());
-
         Assertions.assertEquals(200, response.statusCode());
     }
 
@@ -208,9 +200,7 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
         SubTask taskFromServer = gson.fromJson(response.body(), SubTask.class);
-
         System.out.println(taskFromServer);
         Assertions.assertEquals(subtask3.toString(), taskFromServer.toString());
         Assertions.assertEquals(200, response.statusCode());
@@ -221,11 +211,9 @@ class HttpTaskServerTest {
         Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
         manager.addEpic(epic1);
 
-
         SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
                 LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
         manager.addSubTask(subtask3);
-        System.out.println("1");
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/subtask/epic/?id=1");
         HttpRequest request = HttpRequest.newBuilder()
@@ -233,9 +221,7 @@ class HttpTaskServerTest {
                 .GET()
                 .header("Accept", "application/json")
                 .build();
-        System.out.println("2");
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("3");
         HashMap<Integer, SubTask> listFromServer = gson.fromJson(response.body(), new TypeToken<HashMap<Integer, SubTask>>() {
         }.getType());
         Assertions.assertEquals(listFromServer.toString(), epic1.getInnerSubTask().toString());
@@ -302,7 +288,6 @@ class HttpTaskServerTest {
         Task task1 = new Task(TaskType.TASK, "2001добавленный", TaskStatus.NEW,
                 LocalDateTime.of(2001, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "11");
 
-
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/task/");
 
@@ -314,7 +299,6 @@ class HttpTaskServerTest {
                 .header("Accept", "application/json")
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
 
         Assertions.assertEquals(task1.getName(), manager.getTaskById(1).getName());
         Assertions.assertEquals(200, response.statusCode());
@@ -342,7 +326,6 @@ class HttpTaskServerTest {
         String name1 = manager.getTaskById(1).getName();
         String name2 = task2.getName();
 
-
         Assertions.assertEquals(name1, name2);
         Assertions.assertEquals(200, response.statusCode());
 
@@ -358,7 +341,6 @@ class HttpTaskServerTest {
         // вручную. Можете подсказать почему при попытке добавить эпик с null-евыми датами адаптер ругается
         // на то что передается нулл, а не стринг? 3 дня бился, несколко раз переписывал все откатываясь на
         // начальное состояние проекта. Наставник молчит, одногруппники не могут помочь.
-
 
         HttpClient client = HttpClient.newHttpClient();
         URI uriRequest = URI.create("http://localhost:8080/tasks/epic/");
@@ -381,7 +363,6 @@ class HttpTaskServerTest {
         SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
                 LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
         manager.addSubTask(subtask3);
-
 
         Epic epic2 = epic1;
         epic2.setName("обновленный");
@@ -428,7 +409,6 @@ class HttpTaskServerTest {
                 LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
         manager.addSubTask(subtask3);
 
-
         SubTask subTaskUpd = subtask3;
         subTaskUpd.setName("обновленный");
         HttpClient client = HttpClient.newHttpClient();
@@ -443,7 +423,6 @@ class HttpTaskServerTest {
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertEquals(subTaskUpd.getName(), manager.getSubTaskById(subtask3.getId()).getName());
     }
-
 
     //Проверка удаления
     @Test
@@ -550,7 +529,6 @@ class HttpTaskServerTest {
         Epic epic1 = new Epic(TaskType.EPIC, "эпик включающий2009", "55", TaskStatus.NEW);
         manager.addEpic(epic1);
 
-
         SubTask subtask3 = new SubTask(TaskType.SUBTASK, "2009", TaskStatus.DONE,
                 LocalDateTime.of(2009, 1, 1, 1, 1, 1), Duration.ofMinutes(20), "66", 1);
         manager.addSubTask(subtask3);
@@ -563,10 +541,7 @@ class HttpTaskServerTest {
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println(manager.viewAllSubtask());
-
         Assertions.assertTrue(manager.viewAllSubtask().isEmpty());
         Assertions.assertEquals(200, response.statusCode());
     }
-
-
 }
